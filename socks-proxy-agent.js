@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 
+var tls; // lazy-loaded...
 var url = require('url');
 var Agent = require('agent-base');
 var RainbowSocks = require('rainbowsocks');
@@ -20,14 +21,16 @@ module.exports = SocksProxyAgent;
  * @api public
  */
 
-function SocksProxyAgent (opts) {
+function SocksProxyAgent (opts, secure) {
   if (!(this instanceof SocksProxyAgent)) return new SocksProxyAgent(opts);
   if ('string' == typeof opts) opts = url.parse(opts);
   if (!opts) throw new Error('a SOCKS proxy server `host` and `port` must be specified!');
   var proxy = clone(opts, {});
   Agent.call(this);
 
-  this.secure = proxy.protocol && proxy.protocol == 'https:';
+  // if `true` is passed for `secure` the the socket will be upgraded
+  // to a TLS socket before the HTTP request is written to it
+  this.secure = !!secure;
 
   // prefer `hostname` over `host`, and set the `port` if needed
   proxy.host = proxy.hostname || proxy.host;
@@ -58,12 +61,22 @@ Agent.prototype.defaultPort = 1080;
  */
 
 SocksProxyAgent.prototype.createConnection = function (opts, fn) {
+  var secure = this.secure;
   var proxy = new RainbowSocks(this.proxy.port, this.proxy.host);
   proxy.once('connect', function (err) {
     if (err) return fn(err);
     proxy.connect(opts.host, opts.port, function (err, socket) {
       if (err) return fn(err);
-      fn(null, socket);
+      var s = socket;
+      if (secure) {
+        // upgrade to TLS first!
+        if (!tls) tls = require('tls');
+        s = tls.connect({
+          servername: opts.host,
+          socket: socket
+        });
+      }
+      fn(null, s);
     });
   });
 };
