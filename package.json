@@ -25,7 +25,8 @@
     "url": "https://github.com/TooTallNate/node-socks-proxy-agent/issues"
   },
   "dependencies": {
-    "agent-base": "~0.0.1"
+    "agent-base": "~0.0.1",
+    "rainbowsocks": "~0.1.0"
   },
   "devDependencies": {
     "mocha": "~1.12.0"
