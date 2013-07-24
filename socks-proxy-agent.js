@@ -51,7 +51,7 @@ inherits(SocksProxyAgent, Agent);
  * Default port to connect to.
  */
 
-Agent.prototype.defaultPort = 1080;
+SocksProxyAgent.prototype.defaultPort = 1080;
 
 /**
  * Initiates a SOCKS connection to the specified SOCKS proxy server, which in turn
