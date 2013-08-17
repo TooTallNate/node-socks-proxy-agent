@@ -6,6 +6,9 @@ This module provides an `http.Agent` implementation that connects to a specified
 SOCKS (v4a) proxy server, and can be used with the built-in `http` or `https`
 modules.
 
+It can also be used in conjunction with the `ws` module to establish a WebSocket
+connection over a SOCKS proxy. See the "Examples" section below.
+
 Installation
 ------------
 
@@ -16,8 +19,8 @@ $ npm install socks-proxy-agent
 ```
 
 
-Example
--------
+Examples
+--------
 
 #### `http` module example
 
