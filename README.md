@@ -19,7 +19,7 @@ $ npm install socks-proxy-agent
 Example
 -------
 
-`http` module example:
+#### `http` module example
 
 ``` js
 var url = require('url');
@@ -45,7 +45,7 @@ http.get(opts, function (res) {
 });
 ```
 
-`https` module example:
+#### `https` module example
 
 ``` js
 var url = require('url');
@@ -72,7 +72,7 @@ http.get(opts, function (res) {
 });
 ```
 
-`ws` WebSocket connection example:
+#### `ws` WebSocket connection example
 
 ``` js
 var WebSocket = require('ws');
