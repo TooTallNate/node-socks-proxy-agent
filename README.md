@@ -93,7 +93,7 @@ console.log('attempting to connect to WebSocket %j', endpoint);
 var agent = new SocksProxyAgent(proxy);
 
 // initiate the WebSocket connection
-var socket = new WebSocket(url, { agent: agent });
+var socket = new WebSocket(endpoint, { agent: agent });
 
 socket.on('open', function () {
   console.log('"open" event!');
