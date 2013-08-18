@@ -12,6 +12,8 @@ var SocksProxyAgent = require('../');
 
 describe('SocksProxyAgent', function () {
 
+  // adjusting the "slow" and "timeout" values because I run the
+  // tests against the Tor SOCKS proxy
   this.slow(5000);
   this.timeout(10000);
 
