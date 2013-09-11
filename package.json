@@ -26,7 +26,8 @@
   },
   "dependencies": {
     "agent-base": "~1.0.1",
-    "rainbowsocks": "~0.1.0"
+    "rainbowsocks": "~0.1.0",
+    "extend": "~1.2.0"
   },
   "devDependencies": {
     "mocha": "~1.12.0"
