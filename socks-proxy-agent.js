@@ -35,7 +35,7 @@ function SocksProxyAgent (opts, secure) {
   // Defaults to `false`
   this.secureEndpoint = Boolean(secure || opts.secureEndpoint || false);
 
-  // prefer `hostname` over `host`, and set the `port` if needed
+  // prefer `hostname` over `host`, because of `url.parse()`
   proxy.host = proxy.hostname || proxy.host;
 
   // SOCKS doesn't *technically* have a default port, but this is
@@ -47,6 +47,7 @@ function SocksProxyAgent (opts, secure) {
     // result of a `url.parse()` call... we need to remove the `path` portion so
     // that `net.connect()` doesn't attempt to open that as a unix socket file.
     delete proxy.path;
+    delete proxy.pathname;
   }
 
   this.proxy = proxy;
@@ -73,7 +74,13 @@ function connect (req, _opts, fn) {
   var secureEndpoint = this.secureEndpoint;
 
   // these `opts` are the connect options to connect to the destination endpoint
-  var opts = extend({}, proxy, secureEndpoint ? secureDefaults : defaults, _opts);
+  // XXX: we mix in the proxy options so that TLS options like
+  // `rejectUnauthorized` get passed to the destination endpoint as well
+  var proxyOpts = extend({}, proxy);
+  delete proxyOpts.host;
+  delete proxyOpts.hostname;
+  delete proxyOpts.port;
+  var opts = extend({}, proxyOpts, secureEndpoint ? secureDefaults : defaults, _opts);
 
   var socks = new RainbowSocks(proxy.port, proxy.host);
   socks.once('connect', function (err) {
@@ -95,4 +102,4 @@ function connect (req, _opts, fn) {
       fn(null, s);
     });
   });
-};
+}
