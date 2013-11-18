@@ -33,7 +33,7 @@ function SocksProxyAgent (opts, secure) {
   // If `true` is passed for `secureEndpoint` the the socket will be
   // upgraded to a TLS socket before the HTTP request is written to it.
   // Defaults to `false`
-  this.secureEndpoint = secure || opts.secureEndpoint || false;
+  this.secureEndpoint = Boolean(secure || opts.secureEndpoint || false);
 
   // prefer `hostname` over `host`, and set the `port` if needed
   proxy.host = proxy.hostname || proxy.host;
