@@ -82,24 +82,30 @@ function connect (req, _opts, fn) {
   delete proxyOpts.port;
   var opts = extend({}, proxyOpts, secureEndpoint ? secureDefaults : defaults, _opts);
 
-  var socks = new RainbowSocks(proxy.port, proxy.host);
-  socks.once('connect', function (err) {
+  // called once the SOCKS proxy has been connected to
+  function onproxyconnect (err) {
     if (err) return fn(err);
-    socks.connect(opts.host, opts.port, function (err, socket) {
-      if (err) return fn(err);
-      var s = socket;
-      if (secureEndpoint) {
-        // since the proxy is connecting to an SSL server, we have
-        // to upgrade this socket connection to an SSL connection
-        if (!tls) tls = require('tls');
-        opts.socket = socket;
-        opts.servername = opts.host;
-        opts.host = null;
-        opts.hostname = null;
-        opts.port = null;
-        s = tls.connect(opts);
-      }
-      fn(null, s);
-    });
-  });
+    socks.connect(opts.host, opts.port, onhostconnect);
+  }
+
+  // called once the SOCKS proxy has connected to the specified remote endpoint
+  function onhostconnect (err, socket) {
+    if (err) return fn(err);
+    var s = socket;
+    if (secureEndpoint) {
+      // since the proxy is connecting to an SSL server, we have
+      // to upgrade this socket connection to an SSL connection
+      if (!tls) tls = require('tls');
+      opts.socket = socket;
+      opts.servername = opts.host;
+      opts.host = null;
+      opts.hostname = null;
+      opts.port = null;
+      s = tls.connect(opts);
+    }
+    fn(null, s);
+  }
+
+  var socks = new RainbowSocks(proxy.port, proxy.host);
+  socks.once('connect', onproxyconnect);
 }
