@@ -23,7 +23,7 @@ module.exports = SocksProxyAgent;
  */
 
 function SocksProxyAgent (opts, secure) {
-  if (!(this instanceof SocksProxyAgent)) return new SocksProxyAgent(opts);
+  if (!(this instanceof SocksProxyAgent)) return new SocksProxyAgent(opts, secure);
   if ('string' == typeof opts) opts = url.parse(opts);
   if (!opts) throw new Error('a SOCKS proxy server `host` and `port` must be specified!');
   Agent.call(this, connect);
