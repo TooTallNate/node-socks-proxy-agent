@@ -1,4 +1,11 @@
 
+0.1.1 / 2014-04-09
+==================
+
+  * package: update outdated dependencies
+  * socks-proxy-agent: pass `secure` flag when no `new`
+  * socks-proxy-agent: small code cleanup
+
 0.1.0 / 2013-11-19
 ==================
 
