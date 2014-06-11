@@ -1,4 +1,10 @@
 
+0.1.2 / 2014-06-11
+==================
+
+  * package: update "rainbowsocks" to v0.1.2
+  * travis: don't test node v0.9
+
 0.1.1 / 2014-04-09
 ==================
 
