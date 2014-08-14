@@ -57,5 +57,4 @@ describe('SocksProxyAgent', function () {
       });
     });
   });
-
 });

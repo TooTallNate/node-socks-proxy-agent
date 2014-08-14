@@ -107,5 +107,6 @@ function connect (req, _opts, fn) {
   }
 
   var socks = new RainbowSocks(proxy.port, proxy.host);
+  socks.once("error",onproxyconnect);
   socks.once('connect', onproxyconnect);
 }
