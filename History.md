@@ -1,3 +1,8 @@
+0.2.0 / 2015-02-11
+==================
+
+  * replace rainbowsocks with socks-client to support socks5 protocol
+  * (breaking change) By default for socks:// protocol it will use socks5
 
 0.1.2 / 2014-06-11
 ==================

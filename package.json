@@ -1,7 +1,7 @@
 {
   "name": "socks-proxy-agent",
   "version": "0.1.2",
-  "description": "A SOCKS (v4a) proxy `http.Agent` implementation for HTTP and HTTPS",
+  "description": "A SOCKS (4, 4a and 5)  proxy `http.Agent` implementation for HTTP and HTTPS",
   "main": "socks-proxy-agent.js",
   "scripts": {
     "test": "mocha --reporter spec"
@@ -14,6 +14,7 @@
     "socks",
     "socks4",
     "socks4a",
+    "socks5",
     "proxy",
     "http",
     "https",
@@ -25,8 +26,7 @@
     "url": "https://github.com/TooTallNate/node-socks-proxy-agent/issues"
   },
   "dependencies": {
-    "agent-base": "~1.0.1",
-    "rainbowsocks": "~0.1.2",
+    "socks-client": "^1.1.2",
     "extend": "~1.2.1"
   },
   "devDependencies": {
