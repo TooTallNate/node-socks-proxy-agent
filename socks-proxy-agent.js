@@ -52,7 +52,18 @@ function SocksProxyAgent (opts, secure) {
 
   // figure out if we want socks v4 or v5, based on the "protocol" used.
   // Defaults to 5.
-  proxy.version = proxy.protocol.match(/^socks(\d+)?:$/i)[1] || 5;
+  switch (proxy.protocol) {
+    case 'socks4:':
+    case 'socks4a:':
+      proxy.version = 4;
+      break;
+    case 'socks:': // default
+    case 'socks5:':
+      proxy.version = 5;
+      break;
+    default:
+      throw new TypeError('A "socks" protocol must be specified! Got: ' + proxy.protocol);
+  }
 
   this.proxy = proxy;
 }
