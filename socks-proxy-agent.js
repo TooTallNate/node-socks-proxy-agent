@@ -7,7 +7,7 @@ var tls; // lazy-loaded...
 var url = require('url');
 var extend = require('extend');
 var Agent = require('agent-base');
-var RainbowSocks = require('rainbowsocks');
+var SocksClient = require('socks-client');
 var inherits = require('util').inherits;
 
 /**
@@ -49,6 +49,10 @@ function SocksProxyAgent (opts, secure) {
     delete proxy.path;
     delete proxy.pathname;
   }
+
+  // figure out if we want socks v4 or v5, based on the "protocol" used.
+  // Defaults to 5.
+  proxy.version = proxy.protocol.match(/^socks(\d+)?:$/i)[1] || 5;
 
   this.proxy = proxy;
 }
@@ -102,10 +106,22 @@ function connect (req, _opts, fn) {
       opts.hostname = null;
       opts.port = null;
       s = tls.connect(opts);
+      socket.resume();
     }
     fn(null, s);
   }
 
-  var socks = new RainbowSocks(proxy.port, proxy.host);
-  socks.once('connect', onproxyconnect);
+  var options = {
+    proxy: {
+      ipaddress: proxy.host,
+      port: proxy.port,
+      type: proxy.version
+    },
+    target: {
+      host: opts.host,
+      port: opts.port
+    },
+    command: 'connect'
+  };
+  SocksClient.createConnection(options, onhostconnect);
 }
