@@ -127,7 +127,6 @@ function connect (req, _opts, fn) {
   function onlookup (err, ip, type) {
     if (err) return fn(err);
     options.target.host = ip;
-    console.log(options.target);
     SocksClient.createConnection(options, onhostconnect);
   }
 
@@ -149,7 +148,6 @@ function connect (req, _opts, fn) {
   } else {
     // proxy hostname DNS resolution for "4a" and "5h" socks proxy servers
     options.target.host = opts.host;
-    console.log(options.target);
     SocksClient.createConnection(options, onhostconnect);
   }
 }
