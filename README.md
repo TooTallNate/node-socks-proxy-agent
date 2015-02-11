@@ -1,10 +1,10 @@
 socks-proxy-agent
 ================
-### A SOCKS (v4a) proxy `http.Agent` implementation for HTTP and HTTPS
+### A SOCKS (v4, v4a and v5) proxy `http.Agent` implementation for HTTP and HTTPS
 [![Build Status](https://travis-ci.org/TooTallNate/node-socks-proxy-agent.png?branch=master)](https://travis-ci.org/TooTallNate/node-socks-proxy-agent)
 
 This module provides an `http.Agent` implementation that connects to a specified
-SOCKS (v4a) proxy server, and can be used with the built-in `http` or `https`
+SOCKS (v4, v4a and v5) proxy server, and can be used with the built-in `http` or `https`
 modules.
 
 It can also be used in conjunction with the `ws` module to establish a WebSocket
@@ -47,6 +47,11 @@ http.get(opts, function (res) {
   console.log('"response" event!', res.headers);
   res.pipe(process.stdout);
 });
+```
+If you want to use socks4 protocol, please change `socks://127.0.0.1:9050` in above code to `socks4://127.0.0.1:9050`. (It uses socks5 by default since version 0.2.0)
+It also support socks5 username and password authentication:
+```js
+var proxy = process.env.socks_proxy || 'socks://username:password@127.0.0.1:9050';
 ```
 
 #### `https` module example
