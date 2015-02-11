@@ -97,12 +97,6 @@ function connect (req, _opts, fn) {
   delete proxyOpts.port;
   var opts = extend({}, proxyOpts, secureEndpoint ? secureDefaults : defaults, _opts);
 
-  // called once the SOCKS proxy has been connected to
-  function onproxyconnect (err) {
-    if (err) return fn(err);
-    socks.connect(opts.host, opts.port, onhostconnect);
-  }
-
   // called once the SOCKS proxy has connected to the specified remote endpoint
   function onhostconnect (err, socket) {
     if (err) return fn(err);
