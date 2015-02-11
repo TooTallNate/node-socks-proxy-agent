@@ -27,7 +27,6 @@
   "dependencies": {
     "agent-base": "~1.0.1",
     "extend": "~1.2.1",
-    "rainbowsocks": "~0.1.2",
     "socks-client": "~1.1.2"
   },
   "devDependencies": {
