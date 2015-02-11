@@ -30,6 +30,6 @@
     "extend": "~1.2.1"
   },
   "devDependencies": {
-    "mocha": "~1.18.2"
+    "mocha": "2"
   }
 }
