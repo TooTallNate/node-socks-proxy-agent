@@ -5,9 +5,10 @@
 
 var tls; // lazy-loaded...
 var url = require('url');
+var dns = require('dns');
 var extend = require('extend');
 var Agent = require('agent-base');
-var RainbowSocks = require('rainbowsocks');
+var SocksClient = require('socks-client');
 var inherits = require('util').inherits;
 
 /**
@@ -50,6 +51,27 @@ function SocksProxyAgent (opts, secure) {
     delete proxy.pathname;
   }
 
+  // figure out if we want socks v4 or v5, based on the "protocol" used.
+  // Defaults to 5.
+  proxy.lookup = false;
+  switch (proxy.protocol) {
+    case 'socks4:':
+      proxy.lookup = true;
+      // pass through
+    case 'socks4a:':
+      proxy.version = 4;
+      break;
+    case 'socks5:':
+      proxy.lookup = true;
+      // pass through
+    case 'socks:': // no version specified, default to 5h
+    case 'socks5h:':
+      proxy.version = 5;
+      break;
+    default:
+      throw new TypeError('A "socks" protocol must be specified! Got: ' + proxy.protocol);
+  }
+
   this.proxy = proxy;
 }
 inherits(SocksProxyAgent, Agent);
@@ -82,12 +104,6 @@ function connect (req, _opts, fn) {
   delete proxyOpts.port;
   var opts = extend({}, proxyOpts, secureEndpoint ? secureDefaults : defaults, _opts);
 
-  // called once the SOCKS proxy has been connected to
-  function onproxyconnect (err) {
-    if (err) return fn(err);
-    socks.connect(opts.host, opts.port, onhostconnect);
-  }
-
   // called once the SOCKS proxy has connected to the specified remote endpoint
   function onhostconnect (err, socket) {
     if (err) return fn(err);
@@ -102,10 +118,36 @@ function connect (req, _opts, fn) {
       opts.hostname = null;
       opts.port = null;
       s = tls.connect(opts);
+      socket.resume();
     }
     fn(null, s);
   }
 
-  var socks = new RainbowSocks(proxy.port, proxy.host);
-  socks.once('connect', onproxyconnect);
+  // called for the `dns.lookup()` callback
+  function onlookup (err, ip, type) {
+    if (err) return fn(err);
+    options.target.host = ip;
+    SocksClient.createConnection(options, onhostconnect);
+  }
+
+  var options = {
+    proxy: {
+      ipaddress: proxy.host,
+      port: proxy.port,
+      type: proxy.version
+    },
+    target: {
+      port: opts.port
+    },
+    command: 'connect'
+  };
+
+  if (proxy.lookup) {
+    // client-side DNS resolution for "4" and "5" socks proxy versions
+    dns.lookup(opts.host, onlookup);
+  } else {
+    // proxy hostname DNS resolution for "4a" and "5h" socks proxy servers
+    options.target.host = opts.host;
+    SocksClient.createConnection(options, onhostconnect);
+  }
 }
