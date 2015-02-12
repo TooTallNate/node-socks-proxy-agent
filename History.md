@@ -1,4 +1,14 @@
 
+1.0.0 / 2015-02-11
+==================
+
+  * add client-side DNS lookup logic for 4 and 5 version socks proxies
+  * remove dead `onproxyconnect()` code function
+  * use a switch statement to decide the socks `version`
+  * refactor to use "socks-client" instead of "rainbowsocks"
+  * package: remove "rainbowsocks" dependency
+  * package: allow any "mocha" v2
+
 0.1.2 / 2014-06-11
 ==================
 
