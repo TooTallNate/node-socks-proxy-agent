@@ -1,6 +1,6 @@
 {
   "name": "socks-proxy-agent",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "A SOCKS (v4a) proxy `http.Agent` implementation for HTTP and HTTPS",
   "main": "socks-proxy-agent.js",
   "scripts": {
