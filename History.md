@@ -1,4 +1,9 @@
 
+1.0.1 / 2015-03-01
+==================
+
+  * switched from using "socks-client" to "socks" (#5, @JoshGlazebrook)
+
 1.0.0 / 2015-02-11
 ==================
 
