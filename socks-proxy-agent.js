@@ -8,7 +8,7 @@ var url = require('url');
 var dns = require('dns');
 var extend = require('extend');
 var Agent = require('agent-base');
-var SocksClient = require('socks-client');
+var SocksClient = require('socks');
 var inherits = require('util').inherits;
 
 /**
