@@ -133,11 +133,11 @@ function connect (req, _opts, fn) {
   var options = {
     proxy: {
       ipaddress: proxy.host,
-      port: proxy.port,
+      port: +proxy.port,
       type: proxy.version
     },
     target: {
-      port: opts.port
+      port: +opts.port
     },
     command: 'connect'
   };
