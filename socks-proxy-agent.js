@@ -71,7 +71,11 @@ function SocksProxyAgent (opts, secure) {
     default:
       throw new TypeError('A "socks" protocol must be specified! Got: ' + proxy.protocol);
   }
-
+  if (proxy.auth){
+    var auth=proxy.auth.split(":");
+    proxy.authentication={"username":auth[0],"password":auth[1]};
+    proxy.userid=auth[0];
+  }
   this.proxy = proxy;
 }
 inherits(SocksProxyAgent, Agent);
@@ -134,7 +138,9 @@ function connect (req, _opts, fn) {
     proxy: {
       ipaddress: proxy.host,
       port: proxy.port,
-      type: proxy.version
+      type: proxy.version,
+      authentication: proxy.authentication,
+      userid: proxy.userid
     },
     target: {
       port: opts.port
