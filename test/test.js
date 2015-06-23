@@ -149,11 +149,20 @@ describe('SocksProxyAgent', function () {
 
       var secure = true;
       var proxy = url.parse('socks://127.0.0.1:' + socksPort);
+
+      // XXX: in node >= v0.12, you can pass the `rejectUnauthorized`
+      // directly to the http.get() `opts`, but for <= v0.10 we're
+      // passing it as a proxy option instead
+      proxy.rejectUnauthorized = false;
+
       var agent = new SocksProxyAgent(proxy, secure);
       var link = 'https://127.0.0.1:' + httpsPort + '/foo';
       var opts = url.parse(link);
       opts.agent = agent;
-      opts.rejectUnauthorized = false;
+
+      // XXX: works in v0.12, doesn't in <= v0.10
+      //opts.rejectUnauthorized = false;
+
       opts.headers = { foo: 'bar' };
       var req = https.get(opts, function (res) {
         assert.equal(404, res.statusCode);
