@@ -121,7 +121,7 @@ describe('SocksProxyAgent', function () {
       var opts = url.parse(link);
       opts.agent = agent;
       opts.headers = { foo: 'bar' };
-      http.get(opts, function (res) {
+      var req = http.get(opts, function (res) {
         assert.equal(404, res.statusCode);
         var data = '';
         res.setEncoding('utf8');
@@ -134,6 +134,7 @@ describe('SocksProxyAgent', function () {
           done();
         });
       });
+      req.once('error', done);
     });
   });
 
@@ -154,7 +155,7 @@ describe('SocksProxyAgent', function () {
       opts.agent = agent;
       opts.rejectUnauthorized = false;
       opts.headers = { foo: 'bar' };
-      https.get(opts, function (res) {
+      var req = https.get(opts, function (res) {
         assert.equal(404, res.statusCode);
         var data = '';
         res.setEncoding('utf8');
@@ -167,6 +168,7 @@ describe('SocksProxyAgent', function () {
           done();
         });
       });
+      req.once('error', done);
     });
   });
 
