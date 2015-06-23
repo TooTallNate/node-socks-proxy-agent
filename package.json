@@ -1,7 +1,7 @@
 {
   "name": "socks-proxy-agent",
   "version": "1.0.1",
-  "description": "A SOCKS (v4a) proxy `http.Agent` implementation for HTTP and HTTPS",
+  "description": "A SOCKS proxy `http.Agent` implementation for HTTP and HTTPS",
   "main": "socks-proxy-agent.js",
   "scripts": {
     "test": "mocha --reporter spec"
