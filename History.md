@@ -1,4 +1,17 @@
 
+1.0.2 / 2015-07-01
+==================
+
+  * remove "v4a" from description
+  * socks-proxy-agent: cast `port` to a Number
+  * travis: attempt to make node v0.8 work
+  * travis: test node v0.12, don't test v0.11
+  * test: pass `rejectUnauthorized` as a proxy opt
+  * test: catch http.ClientRequest errors
+  * test: add self-signed SSL server cert files
+  * test: refactor to use local SOCKS, HTTP and HTTPS servers
+  * README: use SVG for Travis-CI badge
+
 1.0.1 / 2015-03-01
 ==================
 
