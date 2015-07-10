@@ -19,7 +19,6 @@ describe('SocksProxyAgent', function () {
   before(function (done) {
     // setup SOCKS proxy server
     socksServer = socks.createServer(function(info, accept, deny) {
-      //console.log(info);
       accept();
     });
     socksServer.listen(0, '127.0.0.1', function() {
@@ -80,45 +79,25 @@ describe('SocksProxyAgent', function () {
       var agent = new SocksProxyAgent('socks://127.0.0.1:' + socksPort);
       assert.equal('127.0.0.1', agent.proxy.host);
       assert.equal(socksPort, agent.proxy.port);
-      assert.equal(false, agent.secureEndpoint);
     });
     it('should accept a `url.parse()` result object argument', function () {
       var opts = url.parse('socks://127.0.0.1:' + socksPort);
       var agent = new SocksProxyAgent(opts);
       assert.equal('127.0.0.1', agent.proxy.host);
       assert.equal(socksPort, agent.proxy.port);
-      assert.equal(false, agent.secureEndpoint);
-    });
-    describe('secureEndpoint', function () {
-      it('should default to `false`', function () {
-        var opts = url.parse('socks://127.0.0.1:' + socksPort);
-        var agent = new SocksProxyAgent(opts);
-        assert.equal(socksPort, agent.proxy.port);
-        assert.equal(false, agent.secureEndpoint);
-      });
-      it('should be `true` when passed in as the second argument', function () {
-        var opts = url.parse('socks://127.0.0.1:' + socksPort);
-        var agent = new SocksProxyAgent(opts, true);
-        assert.equal(socksPort, agent.proxy.port);
-        assert.equal(true, agent.secureEndpoint);
-      });
     });
   });
 
   describe('"http" module', function () {
     it('should work against an HTTP endpoint', function (done) {
-      // set HTTP "request" event handler for this test
       httpServer.once('request', function (req, res) {
         assert.equal('/foo', req.url);
         res.statusCode = 404;
         res.end(JSON.stringify(req.headers));
       });
 
-      var secure = false;
-      var proxy = 'socks://127.0.0.1:' + socksPort;
-      var agent = new SocksProxyAgent(proxy, secure);
-      var link = 'http://127.0.0.1:' + httpPort + '/foo';
-      var opts = url.parse(link);
+      var agent = new SocksProxyAgent('socks://127.0.0.1:' + socksPort);
+      var opts = url.parse('http://127.0.0.1:' + httpPort + '/foo');
       opts.agent = agent;
       opts.headers = { foo: 'bar' };
       var req = http.get(opts, function (res) {
@@ -140,28 +119,16 @@ describe('SocksProxyAgent', function () {
 
   describe('"https" module', function () {
     it('should work against an HTTPS endpoint', function (done) {
-      // set HTTPS "request" event handler for this test
       httpsServer.once('request', function (req, res) {
         assert.equal('/foo', req.url);
         res.statusCode = 404;
         res.end(JSON.stringify(req.headers));
       });
 
-      var secure = true;
-      var proxy = url.parse('socks://127.0.0.1:' + socksPort);
-
-      // XXX: in node >= v0.12, you can pass the `rejectUnauthorized`
-      // directly to the http.get() `opts`, but for <= v0.10 we're
-      // passing it as a proxy option instead
-      proxy.rejectUnauthorized = false;
-
-      var agent = new SocksProxyAgent(proxy, secure);
-      var link = 'https://127.0.0.1:' + httpsPort + '/foo';
-      var opts = url.parse(link);
+      var agent = new SocksProxyAgent('socks://127.0.0.1:' + socksPort);
+      var opts = url.parse('https://127.0.0.1:' + httpsPort + '/foo');
       opts.agent = agent;
-
-      // XXX: works in v0.12, doesn't in <= v0.10
-      //opts.rejectUnauthorized = false;
+      opts.rejectUnauthorized = false;
 
       opts.headers = { foo: 'bar' };
       var req = https.get(opts, function (res) {

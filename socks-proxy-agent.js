@@ -23,18 +23,13 @@ module.exports = SocksProxyAgent;
  * @api public
  */
 
-function SocksProxyAgent (opts, secure) {
-  if (!(this instanceof SocksProxyAgent)) return new SocksProxyAgent(opts, secure);
+function SocksProxyAgent (opts) {
+  if (!(this instanceof SocksProxyAgent)) return new SocksProxyAgent(opts);
   if ('string' == typeof opts) opts = url.parse(opts);
   if (!opts) throw new Error('a SOCKS proxy server `host` and `port` must be specified!');
   Agent.call(this, connect);
 
   var proxy = extend({}, opts);
-
-  // If `true` is passed for `secureEndpoint` the the socket will be
-  // upgraded to a TLS socket before the HTTP request is written to it.
-  // Defaults to `false`
-  this.secureEndpoint = Boolean(secure || opts.secureEndpoint || false);
 
   // prefer `hostname` over `host`, because of `url.parse()`
   proxy.host = proxy.hostname || proxy.host;
@@ -77,38 +72,21 @@ function SocksProxyAgent (opts, secure) {
 inherits(SocksProxyAgent, Agent);
 
 /**
- * Default options for the "connect" opts object.
- */
-
-var defaults = { port: 80 };
-var secureDefaults = { port: 443 };
-
-/**
  * Initiates a SOCKS connection to the specified SOCKS proxy server,
  * which in turn connects to the specified remote host and port.
  *
  * @api public
  */
 
-function connect (req, _opts, fn) {
+function connect (req, opts, fn) {
 
   var proxy = this.proxy;
-  var secureEndpoint = this.secureEndpoint;
-
-  // these `opts` are the connect options to connect to the destination endpoint
-  // XXX: we mix in the proxy options so that TLS options like
-  // `rejectUnauthorized` get passed to the destination endpoint as well
-  var proxyOpts = extend({}, proxy);
-  delete proxyOpts.host;
-  delete proxyOpts.hostname;
-  delete proxyOpts.port;
-  var opts = extend({}, proxyOpts, secureEndpoint ? secureDefaults : defaults, _opts);
 
   // called once the SOCKS proxy has connected to the specified remote endpoint
   function onhostconnect (err, socket) {
     if (err) return fn(err);
     var s = socket;
-    if (secureEndpoint) {
+    if (opts.secureEndpoint) {
       // since the proxy is connecting to an SSL server, we have
       // to upgrade this socket connection to an SSL connection
       if (!tls) tls = require('tls');
