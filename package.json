@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "agent-base": "~1.0.1",
-    "extend": "~1.2.1",
+    "extend": "3",
     "socks": "~1.1.5"
   },
   "devDependencies": {
