@@ -1,4 +1,11 @@
 
+2.0.0 / 2015-07-10
+==================
+
+  * API CHANGE! Removed `secure` boolean second argument in constructor
+  * upgrade to "agent-base" v2 API
+  * package: update "extend" to v3
+
 1.0.2 / 2015-07-01
 ==================
 
