@@ -67,6 +67,11 @@ function SocksProxyAgent (opts) {
       throw new TypeError('A "socks" protocol must be specified! Got: ' + proxy.protocol);
   }
 
+  if (proxy.auth) {
+    var auth = proxy.auth.split(':');
+    proxy.authentication = {username: auth[0], password: auth[1]};
+    proxy.userid = auth[0];
+  }
   this.proxy = proxy;
 }
 inherits(SocksProxyAgent, Agent);
@@ -119,6 +124,10 @@ function connect (req, opts, fn) {
     },
     command: 'connect'
   };
+  if (proxy.authentication) {
+    options.proxy.authentication = proxy.authentication;
+    options.proxy.userid = proxy.userid;
+  }
 
   if (proxy.lookup) {
     // client-side DNS resolution for "4" and "5" socks proxy versions
