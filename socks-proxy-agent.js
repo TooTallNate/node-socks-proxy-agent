@@ -101,8 +101,8 @@ function connect (req, opts, fn) {
       opts.hostname = null;
       opts.port = null;
       s = tls.connect(opts);
-      socket.resume();
     }
+    socket.resume();
     fn(null, s);
   }
 
