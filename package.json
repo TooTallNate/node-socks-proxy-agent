@@ -25,12 +25,11 @@
     "url": "https://github.com/TooTallNate/node-socks-proxy-agent/issues"
   },
   "dependencies": {
-    "agent-base": "2",
-    "extend": "3",
-    "socks": "~1.1.5"
+    "agent-base": "^4.0.1",
+    "socks": "^1.1.10"
   },
   "devDependencies": {
-    "mocha": "2",
+    "mocha": "^3.4.2",
     "raw-body": "^2.2.0",
     "socksv5": "0.0.6"
   }

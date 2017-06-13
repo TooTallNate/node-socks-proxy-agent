@@ -5,7 +5,6 @@
 var tls; // lazy-loaded...
 var url = require('url');
 var dns = require('dns');
-var extend = require('extend');
 var Agent = require('agent-base');
 var SocksClient = require('socks');
 var inherits = require('util').inherits;
@@ -31,7 +30,7 @@ function SocksProxyAgent(opts) {
     );
   Agent.call(this, connect);
 
-  var proxy = extend({}, opts);
+  var proxy = Object.assign({}, opts);
 
   // prefer `hostname` over `host`, because of `url.parse()`
   proxy.host = proxy.hostname || proxy.host;
