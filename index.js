@@ -107,8 +107,6 @@ SocksProxyAgent.prototype.callback = function connect(req, opts, fn) {
       s = tls.connect(opts);
     }
 
-    // socket.resume();
-
     fn(null, s);
   }
 
@@ -130,8 +128,6 @@ SocksProxyAgent.prototype.callback = function connect(req, opts, fn) {
     },
     command: 'connect'
   };
-
-  // console.log( options )
 
   if (proxy.authentication) {
     options.proxy.authentication = proxy.authentication;
