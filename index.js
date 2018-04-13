@@ -93,13 +93,7 @@ SocksProxyAgent.prototype.callback = function connect(req, opts, fn) {
   function onhostconnect(err, result) {
     if (err) return fn(err);
 
-    var socket;
-
-    try {
-      socket = result.socket;
-    } catch ( err ) {
-      return fn(err);
-    }
+    var socket = result.socket;
 
     var s = socket;
     if (opts.secureEndpoint) {
