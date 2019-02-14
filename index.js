@@ -91,7 +91,7 @@ SocksProxyAgent.prototype.callback = function connect(req, opts, fn) {
 
   // called once the SOCKS proxy has connected to the specified remote endpoint
   function onhostconnect(err, result) {
-    if (err) return fn(err);
+    if (err) throw err;
 
     var socket = result.socket;
 
