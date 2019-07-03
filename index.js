@@ -127,7 +127,8 @@ SocksProxyAgent.prototype.callback = function connect(req, opts, fn) {
     destination: {
       port: +opts.port
     },
-    command: 'connect'
+    command: 'connect',
+    timeout: +opts.timeout
   };
 
   if (proxy.authentication) {
