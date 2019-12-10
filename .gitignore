@@ -5,3 +5,6 @@
 
 # vim temp files
 *.sw?
+
+/yarn.lock
+/package-lock.json
