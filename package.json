@@ -6,6 +6,9 @@
   "scripts": {
     "test": "mocha --reporter spec"
   },
+  "files": [
+    "index.js"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/TooTallNate/node-socks-proxy-agent.git"
