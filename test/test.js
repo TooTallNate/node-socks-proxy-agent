@@ -23,13 +23,9 @@ describe('SocksProxyAgent', function() {
 		});
 		socksServer.listen(0, '127.0.0.1', function() {
 			socksPort = socksServer.address().port;
-			//console.log('SOCKS server listening on port %d', socksPort);
 			done();
 		});
 		socksServer.useAuth(socks.auth.None());
-		//socksServer.useAuth(socks.auth.UserPassword(function(user, password, cb) {
-		//  cb(user === 'nodejs' && password === 'rules!');
-		//}));
 	});
 
 	before(function(done) {
