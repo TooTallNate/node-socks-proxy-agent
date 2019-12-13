@@ -34,7 +34,7 @@
   "devDependencies": {
     "mocha": "^5.1.0",
     "raw-body": "^2.3.2",
-    "socksv5": "0.0.6"
+    "socksv5": "TooTallNate/socksv5#fix/dstSock-close-event"
   },
   "engines": {
     "node": ">= 6"
