@@ -2,14 +2,8 @@ import dns from 'dns';
 import net from 'net';
 import tls from 'tls';
 import url from 'url';
-import { SocksClient, SocksProxy, SocksClientOptions } from 'socks';
-import {
-	Agent,
-	ClientRequest,
-	HttpRequestOptions,
-	HttpsRequestOptions,
-	RequestOptions
-} from 'agent-base';
+import { SocksClient, SocksProxy } from 'socks';
+import { Agent, ClientRequest, RequestOptions } from 'agent-base';
 import { SocksProxyAgentOptions } from '.';
 
 function dnsLookup(host: string): Promise<string> {
