@@ -2,19 +2,22 @@
  * Module dependencies.
  */
 
-var fs = require('fs');
-var url = require('url');
-var http = require('http');
-var https = require('https');
-var assert = require('assert');
-var socks = require('socksv5');
-var getRawBody = require('raw-body');
-var SocksProxyAgent = require('../');
+let fs = require('fs');
+let url = require('url');
+let http = require('http');
+let https = require('https');
+let assert = require('assert');
+let socks = require('socksv5');
+let getRawBody = require('raw-body');
+let SocksProxyAgent = require('../');
 
 describe('SocksProxyAgent', function() {
-	var httpServer, httpPort;
-	var httpsServer, httpsPort;
-	var socksServer, socksPort;
+	let httpServer;
+	let httpPort;
+	let httpsServer;
+	let httpsPort;
+	let socksServer;
+	let socksPort;
 
 	before(function(done) {
 		// setup SOCKS proxy server
@@ -39,9 +42,9 @@ describe('SocksProxyAgent', function() {
 
 	before(function(done) {
 		// setup target SSL HTTPS server
-		var options = {
-			key: fs.readFileSync(__dirname + '/ssl-cert-snakeoil.key'),
-			cert: fs.readFileSync(__dirname + '/ssl-cert-snakeoil.pem')
+		let options = {
+			key: fs.readFileSync(`${__dirname}/ssl-cert-snakeoil.key`),
+			cert: fs.readFileSync(`${__dirname}/ssl-cert-snakeoil.pem`)
 		};
 		httpsServer = https.createServer(options);
 		httpsServer.listen(function() {
@@ -78,13 +81,13 @@ describe('SocksProxyAgent', function() {
 			});
 		});
 		it('should accept a "string" proxy argument', function() {
-			var agent = new SocksProxyAgent('socks://127.0.0.1:' + socksPort);
+			let agent = new SocksProxyAgent(`socks://127.0.0.1:${socksPort}`);
 			assert.equal('127.0.0.1', agent.proxy.host);
 			assert.equal(socksPort, agent.proxy.port);
 		});
 		it('should accept a `url.parse()` result object argument', function() {
-			var opts = url.parse('socks://127.0.0.1:' + socksPort);
-			var agent = new SocksProxyAgent(opts);
+			let opts = url.parse(`socks://127.0.0.1:${socksPort}`);
+			let agent = new SocksProxyAgent(opts);
 			assert.equal('127.0.0.1', agent.proxy.host);
 			assert.equal(socksPort, agent.proxy.port);
 		});
@@ -98,15 +101,15 @@ describe('SocksProxyAgent', function() {
 				res.end(JSON.stringify(req.headers));
 			});
 
-			var agent = new SocksProxyAgent('socks://127.0.0.1:' + socksPort);
-			var opts = url.parse('http://127.0.0.1:' + httpPort + '/foo');
+			let agent = new SocksProxyAgent(`socks://127.0.0.1:${socksPort}`);
+			let opts = url.parse(`http://127.0.0.1:${httpPort}/foo`);
 			opts.agent = agent;
 			opts.headers = { foo: 'bar' };
-			var req = http.get(opts, function(res) {
+			let req = http.get(opts, function(res) {
 				assert.equal(404, res.statusCode);
 				getRawBody(res, 'utf8', function(err, buf) {
 					if (err) return done(err);
-					var data = JSON.parse(buf);
+					let data = JSON.parse(buf);
 					assert.equal('bar', data.foo);
 					done();
 				});
@@ -123,17 +126,17 @@ describe('SocksProxyAgent', function() {
 				res.end(JSON.stringify(req.headers));
 			});
 
-			var agent = new SocksProxyAgent('socks://127.0.0.1:' + socksPort);
-			var opts = url.parse('https://127.0.0.1:' + httpsPort + '/foo');
+			let agent = new SocksProxyAgent(`socks://127.0.0.1:${socksPort}`);
+			let opts = url.parse(`https://127.0.0.1:${httpsPort}/foo`);
 			opts.agent = agent;
 			opts.rejectUnauthorized = false;
 
 			opts.headers = { foo: 'bar' };
-			var req = https.get(opts, function(res) {
+			let req = https.get(opts, function(res) {
 				assert.equal(404, res.statusCode);
 				getRawBody(res, 'utf8', function(err, buf) {
 					if (err) return done(err);
-					var data = JSON.parse(buf);
+					let data = JSON.parse(buf);
 					assert.equal('bar', data.foo);
 					done();
 				});

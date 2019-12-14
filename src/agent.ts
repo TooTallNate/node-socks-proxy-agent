@@ -2,9 +2,12 @@ import dns from 'dns';
 import net from 'net';
 import tls from 'tls';
 import url from 'url';
-import { SocksClient, SocksProxy } from 'socks';
+import createDebug from 'debug';
+import { SocksClient, SocksProxy, SocksClientOptions } from 'socks';
 import { Agent, ClientRequest, RequestOptions } from 'agent-base';
 import { SocksProxyAgentOptions } from '.';
+
+const debug = createDebug('socks-proxy-agent');
 
 function dnsLookup(host: string): Promise<string> {
 	return new Promise((resolve, reject) => {
@@ -18,91 +21,94 @@ function dnsLookup(host: string): Promise<string> {
 	});
 }
 
+function parseSocksProxy(
+	opts: SocksProxyAgentOptions
+): { lookup: boolean; proxy: SocksProxy } {
+	let port = 0;
+	let lookup = false;
+	let type: SocksProxy['type'];
+
+	// Prefer `hostname` over `host`, because of `url.parse()`
+	const host = opts.hostname || opts.host;
+	if (!host) {
+		throw new TypeError('No "host"');
+	}
+
+	if (typeof opts.port === 'number') {
+		port = opts.port;
+	} else if (typeof opts.port === 'string') {
+		port = parseInt(opts.port, 10);
+	}
+
+	// SOCKS doesn't *technically* have a default port, but this is
+	// the same default that `curl(1)` uses
+	if (!port) {
+		port = 1080;
+	}
+
+	// figure out if we want socks v4 or v5, based on the "protocol" used.
+	// Defaults to 5.
+	switch (opts.protocol) {
+		case 'socks4:':
+			lookup = true;
+		// pass through
+		case 'socks4a:':
+			type = 4;
+			break;
+		case 'socks5:':
+			lookup = true;
+		// pass through
+		case 'socks:': // no version specified, default to 5h
+		case 'socks5h:':
+			type = 5;
+			break;
+		default:
+			throw new TypeError(
+				`A "socks" protocol must be specified! Got: ${opts.protocol}`
+			);
+	}
+
+	const proxy: SocksProxy = {
+		host,
+		port,
+		type
+	};
+
+	if (opts.auth) {
+		const auth = opts.auth.split(':');
+		proxy.userId = auth[0];
+		proxy.password = auth[1];
+	}
+
+	return { lookup, proxy };
+}
+
 /**
  * The `SocksProxyAgent`.
  *
  * @api public
  */
-
 export default class SocksProxyAgent extends Agent {
 	private lookup: boolean;
 	private proxy: SocksProxy;
 
 	constructor(_opts: string | SocksProxyAgentOptions) {
 		let opts: SocksProxyAgentOptions;
-		if ('string' == typeof _opts) {
+		if (typeof _opts === 'string') {
 			opts = url.parse(_opts);
 		} else {
 			opts = _opts;
 		}
 		if (!opts) {
-			throw new Error(
+			throw new TypeError(
 				'a SOCKS proxy server `host` and `port` must be specified!'
 			);
 		}
 		super(opts);
 
-		const proxy: SocksProxyAgentOptions = { ...opts };
-
-		// prefer `hostname` over `host`, because of `url.parse()`
-		proxy.host = proxy.hostname || proxy.host;
-
-		if (typeof proxy.port === 'string') {
-			proxy.port = parseInt(proxy.port, 10);
-		}
-
-		// SOCKS doesn't *technically* have a default port, but this is
-		// the same default that `curl(1)` uses
-		if (!proxy.port && proxy.host) {
-			proxy.port = 1080;
-		}
-
-		if (typeof proxy.port !== 'number') {
-			throw new TypeError(
-				`'port' expected to be a number, but got ${typeof proxy.port}`
-			);
-		}
-
-		if (proxy.host && proxy.path) {
-			// if both a `host` and `path` are specified then it's most likely the
-			// result of a `url.parse()` call... we need to remove the `path` portion so
-			// that `net.connect()` doesn't attempt to open that as a unix socket file.
-			delete proxy.path;
-			delete proxy.pathname;
-		}
-
-		// figure out if we want socks v4 or v5, based on the "protocol" used.
-		// Defaults to 5.
-		this.lookup = false;
-		switch (proxy.protocol) {
-			case 'socks4:':
-				this.lookup = true;
-			// pass through
-			case 'socks4a:':
-				proxy.type = 4;
-				break;
-			case 'socks5:':
-				this.lookup = true;
-			// pass through
-			case 'socks:': // no version specified, default to 5h
-			case 'socks5h:':
-				proxy.type = 5;
-				break;
-			default:
-				throw new TypeError(
-					'A "socks" protocol must be specified! Got: ' +
-						proxy.protocol
-				);
-		}
-
-		if (proxy.auth) {
-			const [userId, password] = proxy.auth.split(':');
-			proxy.userId = userId;
-			proxy.password = password;
-		}
-
-		// @ts-ignore
-		this.proxy = proxy;
+		const parsedProxy = parseSocksProxy(opts);
+		this.lookup = parsedProxy.lookup;
+		this.proxy = parsedProxy.proxy;
 	}
 
 	/**
@@ -127,19 +133,22 @@ export default class SocksProxyAgent extends Agent {
 			host = await dnsLookup(host);
 		}
 
-		const { socket } = await SocksClient.createConnection({
+		const socksOpts: SocksClientOptions = {
 			proxy,
 			destination: { host, port },
 			command: 'connect'
-		});
+		};
+		debug('Creating Socks proxy connection: %o', socksOpts);
+		const { socket } = await SocksClient.createConnection(socksOpts);
 
 		if (opts.secureEndpoint) {
 			const servername = opts.servername || opts.host;
 			if (!servername) {
 				throw new Error('Could not determine "servername"');
 			}
-			// The proxy is connecting to an SSL server, so upgrade
-			// this socket connection to an SSL connection.
+			// The proxy is connecting to a TLS server, so upgrade
+			// this socket connection to a TLS connection.
+			debug('Upgrading socket connection to TLS');
 			return tls.connect({
 				...omit(opts, 'host', 'hostname', 'path', 'port'),
 				socket,
