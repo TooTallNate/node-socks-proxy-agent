@@ -40,8 +40,8 @@ function parseSocksProxy(
 		port = parseInt(opts.port, 10);
 	}
 
-	// SOCKS doesn't *technically* have a default port, but this is
-	// the same default that `curl(1)` uses
+	// From RFC 1928, Section 3: https://tools.ietf.org/html/rfc1928#section-3
+	// "The SOCKS service is conventionally located on TCP port 1080"
 	if (!port) {
 		port = 1080;
 	}
