@@ -17,6 +17,7 @@ namespace createSocksProxyAgent {
 		port?: string | number | null;
 	}
 
+	export type SocksProxyAgent = _SocksProxyAgent;
 	export const SocksProxyAgent = _SocksProxyAgent;
 
 	createSocksProxyAgent.prototype = _SocksProxyAgent.prototype;
