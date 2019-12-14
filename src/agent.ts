@@ -139,7 +139,7 @@ export default class SocksProxyAgent extends Agent {
 			// The proxy is connecting to an SSL server, so upgrade
 			// this socket connection to an SSL connection.
 			return tls.connect({
-				...omit(opts, 'host', 'hostname', 'path', 'pathname', 'port'),
+				...omit(opts, 'host', 'hostname', 'path', 'port'),
 				socket,
 				servername
 			});
