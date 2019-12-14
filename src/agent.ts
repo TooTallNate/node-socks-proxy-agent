@@ -26,7 +26,7 @@ function parseSocksProxy(
 ): { lookup: boolean; proxy: SocksProxy } {
 	let port = 0;
 	let lookup = false;
-	let type: SocksProxy['type'];
+	let type: SocksProxy['type'] | undefined;
 
 	// Prefer `hostname` over `host`, because of `url.parse()`
 	const host = opts.hostname || opts.host;
@@ -48,24 +48,38 @@ function parseSocksProxy(
 
 	// figure out if we want socks v4 or v5, based on the "protocol" used.
 	// Defaults to 5.
-	switch (opts.protocol) {
-		case 'socks4:':
-			lookup = true;
-		// pass through
-		case 'socks4a:':
-			type = 4;
-			break;
-		case 'socks5:':
-			lookup = true;
-		// pass through
-		case 'socks:': // no version specified, default to 5h
-		case 'socks5h:':
-			type = 5;
-			break;
-		default:
-			throw new TypeError(
-				`A "socks" protocol must be specified! Got: ${opts.protocol}`
-			);
+	if (opts.protocol) {
+		switch (opts.protocol) {
+			case 'socks4:':
+				lookup = true;
+			// pass through
+			case 'socks4a:':
+				type = 4;
+				break;
+			case 'socks5:':
+				lookup = true;
+			// pass through
+			case 'socks:': // no version specified, default to 5h
+			case 'socks5h:':
+				type = 5;
+				break;
+			default:
+				throw new TypeError(
+					`A "socks" protocol must be specified! Got: ${opts.protocol}`
+				);
+		}
+	}
+
+	if (typeof opts.type !== 'undefined') {
+		if (opts.type === 4 || opts.type === 5) {
+			type = opts.type;
+		} else {
+			throw new TypeError(`"type" must be 4 or 5, got: ${opts.type}`);
+		}
+	}
+
+	if (typeof type === 'undefined') {
+		throw new TypeError('Could not determine "type", must be 4 or 5');
 	}
 
 	const proxy: SocksProxy = {
