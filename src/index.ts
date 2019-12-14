@@ -13,7 +13,6 @@ namespace createSocksProxyAgent {
 	export interface SocksProxyAgentOptions
 		extends AgentOptions,
 			Partial<Omit<Url & SocksProxy, 'host' | 'port'>> {
-		secureProxy?: boolean;
 		host?: string | null;
 		port?: string | number | null;
 	}
