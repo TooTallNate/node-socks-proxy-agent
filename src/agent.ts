@@ -2,7 +2,6 @@ import dns from 'dns';
 import net from 'net';
 import tls from 'tls';
 import url from 'url';
-import { promisify } from 'util';
 import { SocksClient, SocksProxy, SocksClientOptions } from 'socks';
 import {
 	Agent,
@@ -13,7 +12,17 @@ import {
 } from 'agent-base';
 import { SocksProxyAgentOptions } from '.';
 
-const dnsLookup = promisify(dns.lookup);
+function dnsLookup(host: string): Promise<string> {
+	return new Promise((resolve, reject) => {
+		dns.lookup(host, (err, res) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(res);
+			}
+		});
+	});
+}
 
 /**
  * The `SocksProxyAgent`.
@@ -121,8 +130,7 @@ export default class SocksProxyAgent extends Agent {
 
 		if (lookup) {
 			// Client-side DNS resolution for "4" and "5" socks proxy versions.
-			const addr = await dnsLookup(host);
-			host = addr.address;
+			host = await dnsLookup(host);
 		}
 
 		const { socket } = await SocksClient.createConnection({
