@@ -158,8 +158,9 @@ export default class SocksProxyAgent extends Agent {
 			destination: { host, port },
 			command: 'connect'
 		};
-		debug('Creating Socks proxy connection: %o', socksOpts);
+		debug('Creating socks proxy connection: %o', socksOpts);
 		const { socket } = await SocksClient.createConnection(socksOpts);
+		debug('Successfully created socks proxy connection');
 
 		if (opts.secureEndpoint) {
 			const servername = opts.servername || opts.host;
