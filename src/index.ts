@@ -10,12 +10,15 @@ function createSocksProxyAgent(
 }
 
 namespace createSocksProxyAgent {
-	export interface SocksProxyAgentOptions
-		extends AgentOptions,
-			Partial<Omit<Url & SocksProxy, 'host' | 'port'>> {
+	interface BaseSocksProxyAgentOptions {
 		host?: string | null;
 		port?: string | number | null;
 	}
+
+	export interface SocksProxyAgentOptions
+		extends AgentOptions,
+			BaseSocksProxyAgentOptions,
+			Partial<Omit<Url & SocksProxy, keyof BaseSocksProxyAgentOptions>> {}
 
 	export type SocksProxyAgent = _SocksProxyAgent;
 	export const SocksProxyAgent = _SocksProxyAgent;
