@@ -5,7 +5,7 @@ socks-proxy-agent
 
 This module provides an `http.Agent` implementation that connects to a
 specified SOCKS proxy server, and can be used with the built-in `http`
-or `https` modules.
+and `https` modules.
 
 It can also be used in conjunction with the `ws` module to establish a WebSocket
 connection over a SOCKS proxy. See the "Examples" section below.
@@ -63,8 +63,8 @@ var agent = new SocksProxyAgent(proxy);
 opts.agent = agent;
 
 http.get(opts, function (res) {
-  console.log('"response" event!', res.headers);
-  res.pipe(process.stdout);
+	console.log('"response" event!', res.headers);
+	res.pipe(process.stdout);
 });
 ```
 
@@ -89,8 +89,8 @@ var agent = new SocksProxyAgent(proxy);
 opts.agent = agent;
 
 https.get(opts, function (res) {
-  console.log('"response" event!', res.headers);
-  res.pipe(process.stdout);
+	console.log('"response" event!', res.headers);
+	res.pipe(process.stdout);
 });
 ```
 
@@ -115,13 +115,13 @@ var agent = new SocksProxyAgent(proxy);
 var socket = new WebSocket(endpoint, { agent: agent });
 
 socket.on('open', function () {
-  console.log('"open" event!');
-  socket.send('hello world');
+	console.log('"open" event!');
+	socket.send('hello world');
 });
 
 socket.on('message', function (data, flags) {
-  console.log('"message" event! %j %j', data, flags);
-  socket.close();
+	console.log('"message" event! %j %j', data, flags);
+	socket.close();
 });
 ```
 
