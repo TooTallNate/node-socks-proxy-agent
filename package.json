@@ -1,6 +1,6 @@
 {
   "name": "socks-proxy-agent",
-  "version": "4.0.2",
+  "version": "5.0.0",
   "description": "A SOCKS proxy `http.Agent` implementation for HTTP and HTTPS",
   "main": "dist/index",
   "typings": "dist/index",
