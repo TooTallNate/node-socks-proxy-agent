@@ -1,4 +1,6 @@
 /node_modules
+/?.?s
+/dist
 
 # mac files
 *.DS_Store
