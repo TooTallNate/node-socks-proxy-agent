@@ -3,8 +3,8 @@ import net from 'net';
 import tls from 'tls';
 import url from 'url';
 import createDebug from 'debug';
-import { SocksClient, SocksProxy, SocksClientOptions } from 'socks';
 import { Agent, ClientRequest, RequestOptions } from 'agent-base';
+import { SocksClient, SocksProxy, SocksClientOptions } from 'socks';
 import { SocksProxyAgentOptions } from '.';
 
 const debug = createDebug('socks-proxy-agent');
@@ -26,7 +26,7 @@ function parseSocksProxy(
 ): { lookup: boolean; proxy: SocksProxy } {
 	let port = 0;
 	let lookup = false;
-	let type: SocksProxy['type'] | undefined;
+	let type: SocksProxy['type'] = 5;
 
 	// Prefer `hostname` over `host`, because of `url.parse()`
 	const host = opts.hostname || opts.host;
@@ -76,10 +76,6 @@ function parseSocksProxy(
 		} else {
 			throw new TypeError(`"type" must be 4 or 5, got: ${opts.type}`);
 		}
-	}
-
-	if (typeof type === 'undefined') {
-		throw new TypeError('Could not determine "type", must be 4 or 5');
 	}
 
 	const proxy: SocksProxy = {
