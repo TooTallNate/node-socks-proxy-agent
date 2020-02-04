@@ -23,15 +23,36 @@ $ npm install socks-proxy-agent
 Examples
 --------
 
+#### TypeScript example
+
+```ts
+import https from 'https';
+import { SocksProxyAgent } from 'socks-proxy-agent';
+
+const info = {
+	host: 'br41.nordvpn.com',
+	userId: 'your-name@gmail.com',
+	password: 'abcdef12345124'
+};
+const agent = new SocksProxyAgent(info);
+
+https.get('https://jsonip.org', {
+	agent
+}, (res) => {
+	console.log(res.headers);
+	res.pipe(process.stdout);
+});
+```
+
 #### `http` module example
 
-``` js
+```js
 var url = require('url');
 var http = require('http');
 var SocksProxyAgent = require('socks-proxy-agent');
 
 // SOCKS proxy to connect to
-var proxy = process.env.socks_proxy || 'socks://127.0.0.1:9050';
+var proxy = process.env.socks_proxy || 'socks://127.0.0.1:1080';
 console.log('using proxy server %j', proxy);
 
 // HTTP endpoint for the proxy to connect to
@@ -51,13 +72,13 @@ http.get(opts, function (res) {
 
 #### `https` module example
 
-``` js
+```js
 var url = require('url');
 var https = require('https');
 var SocksProxyAgent = require('socks-proxy-agent');
 
 // SOCKS proxy to connect to
-var proxy = process.env.socks_proxy || 'socks://127.0.0.1:9050';
+var proxy = process.env.socks_proxy || 'socks://127.0.0.1:1080';
 console.log('using proxy server %j', proxy);
 
 // HTTP endpoint for the proxy to connect to
@@ -82,7 +103,7 @@ var WebSocket = require('ws');
 var SocksProxyAgent = require('socks-proxy-agent');
 
 // SOCKS proxy to connect to
-var proxy = process.env.socks_proxy || 'socks://127.0.0.1:9050';
+var proxy = process.env.socks_proxy || 'socks://127.0.0.1:1080';
 console.log('using proxy server %j', proxy);
 
 // WebSocket endpoint for the proxy to connect to
