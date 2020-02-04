@@ -84,14 +84,22 @@ function parseSocksProxy(
 		type
 	};
 
+	let userId = opts.userId;
+	let password = opts.password;
 	if (opts.auth) {
 		const auth = opts.auth.split(':');
+		userId = auth[0];
+		password = auth[1];
+	}
+	if (userId) {
 		Object.defineProperty(proxy, 'userId', {
-			value: auth[0],
+			value: userId,
 			enumerable: false
 		});
+	}
+	if (password) {
 		Object.defineProperty(proxy, 'password', {
-			value: auth[1],
+			value: password,
 			enumerable: false
 		});
 	}
