@@ -13,6 +13,7 @@ namespace createSocksProxyAgent {
 	interface BaseSocksProxyAgentOptions {
 		host?: string | null;
 		port?: string | number | null;
+		username?: string | null;
 	}
 
 	export interface SocksProxyAgentOptions

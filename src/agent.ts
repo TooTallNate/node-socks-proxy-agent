@@ -84,7 +84,7 @@ function parseSocksProxy(
 		type
 	};
 
-	let userId = opts.userId;
+	let userId = opts.userId || opts.username;
 	let password = opts.password;
 	if (opts.auth) {
 		const auth = opts.auth.split(':');
