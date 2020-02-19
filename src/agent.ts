@@ -146,7 +146,7 @@ export default class SocksProxyAgent extends Agent {
 		opts: RequestOptions
 	): Promise<net.Socket> {
 		const { lookup, proxy } = this;
-		let { host, port } = opts;
+		let { host, port, timeout } = opts;
 
 		if (!host) {
 			throw new Error('No `host` defined!');
@@ -160,7 +160,8 @@ export default class SocksProxyAgent extends Agent {
 		const socksOpts: SocksClientOptions = {
 			proxy,
 			destination: { host, port },
-			command: 'connect'
+			command: 'connect',
+			timeout: timeout
 		};
 		debug('Creating socks proxy connection: %o', socksOpts);
 		const { socket } = await SocksClient.createConnection(socksOpts);
