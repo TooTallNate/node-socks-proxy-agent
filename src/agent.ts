@@ -160,7 +160,8 @@ export default class SocksProxyAgent extends Agent {
 		const socksOpts: SocksClientOptions = {
 			proxy,
 			destination: { host, port },
-			command: 'connect'
+			command: 'connect',
+			timeout: proxy.timeout
 		};
 		debug('Creating socks proxy connection: %o', socksOpts);
 		const { socket } = await SocksClient.createConnection(socksOpts);
