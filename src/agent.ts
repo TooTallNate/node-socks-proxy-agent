@@ -23,7 +23,7 @@ function dnsLookup(host: string): Promise<string> {
 
 function parseSocksProxy(
 	opts: SocksProxyAgentOptions
-): { lookup: boolean; proxy: SocksProxy } {
+): { lookup: boolean; proxy: SocksProxy, tlsSocketOpts: tls.ConnectionOptions | null } {
 	let port = 0;
 	let lookup = false;
 	let type: SocksProxy['type'] = 5;
@@ -103,8 +103,15 @@ function parseSocksProxy(
 			enumerable: false
 		});
 	}
+	let tlsSocketOpts: tls.ConnectionOptions | null = null
+	if(opts.tls) {
+		tlsSocketOpts = {
+			host,
+			port,
+		}
+	}
 
-	return { lookup, proxy };
+	return { lookup, proxy, tlsSocketOpts };
 }
 
 /**
@@ -115,6 +122,7 @@ function parseSocksProxy(
 export default class SocksProxyAgent extends Agent {
 	private lookup: boolean;
 	private proxy: SocksProxy;
+	private tlsSocketOpts: tls.ConnectionOptions | null; 
 
 	constructor(_opts: string | SocksProxyAgentOptions) {
 		let opts: SocksProxyAgentOptions;
@@ -133,6 +141,7 @@ export default class SocksProxyAgent extends Agent {
 		const parsedProxy = parseSocksProxy(opts);
 		this.lookup = parsedProxy.lookup;
 		this.proxy = parsedProxy.proxy;
+		this.tlsSocketOpts = parsedProxy.tlsSocketOpts;
 	}
 
 	/**
@@ -145,7 +154,7 @@ export default class SocksProxyAgent extends Agent {
 		req: ClientRequest,
 		opts: RequestOptions
 	): Promise<net.Socket> {
-		const { lookup, proxy } = this;
+		const { lookup, proxy, tlsSocketOpts } = this;
 		let { host, port } = opts;
 
 		if (!host) {
@@ -162,6 +171,15 @@ export default class SocksProxyAgent extends Agent {
 			destination: { host, port },
 			command: 'connect'
 		};
+
+		if(tlsSocketOpts) {
+			socksOpts.existing_socket = await (new Promise((resolve) => {
+				const tlsSocket = tls.connect(tlsSocketOpts, ()=> {
+					resolve(tlsSocket)
+				})
+			}))
+		}
+
 		debug('Creating socks proxy connection: %o', socksOpts);
 		const { socket } = await SocksClient.createConnection(socksOpts);
 		debug('Successfully created socks proxy connection');
