@@ -49,18 +49,18 @@ function parseSocksProxy(
 	// figure out if we want socks v4 or v5, based on the "protocol" used.
 	// Defaults to 5.
 	if (opts.protocol) {
-		switch (opts.protocol) {
-			case 'socks4:':
+		switch (opts.protocol.replace(':', '')) {
+			case 'socks4':
 				lookup = true;
 			// pass through
-			case 'socks4a:':
+			case 'socks4a':
 				type = 4;
 				break;
-			case 'socks5:':
+			case 'socks5':
 				lookup = true;
 			// pass through
-			case 'socks:': // no version specified, default to 5h
-			case 'socks5h:':
+			case 'socks': // no version specified, default to 5h
+			case 'socks5h':
 				type = 5;
 				break;
 			default:
@@ -155,7 +155,7 @@ export default class SocksProxyAgent extends Agent {
 		opts: RequestOptions
 	): Promise<net.Socket> {
 		const { lookup, proxy, tlsSocketOpts } = this;
-		let { host, port } = opts;
+		let { host, port, timeout } = opts;
 
 		if (!host) {
 			throw new Error('No `host` defined!');
@@ -169,7 +169,8 @@ export default class SocksProxyAgent extends Agent {
 		const socksOpts: SocksClientOptions = {
 			proxy,
 			destination: { host, port },
-			command: 'connect'
+			command: 'connect',
+			timeout
 		};
 
 		if(tlsSocketOpts) {
