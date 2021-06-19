@@ -35,7 +35,7 @@
     "url": "https://github.com/TooTallNate/node-socks-proxy-agent/issues"
   },
   "dependencies": {
-    "agent-base": "6.0.2",
+    "agent-base": "^6.0.2",
     "debug": "4",
     "socks": "^2.3.3"
   },
