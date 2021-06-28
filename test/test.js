@@ -24,7 +24,7 @@ describe('SocksProxyAgent', function() {
 		socksServer = socks.createServer(function(info, accept, deny) {
 			accept();
 		});
-		socksServer.listen(0, '127.0.0.1', function() {
+		socksServer.listen(0, 'localhost', function() {
 			socksPort = socksServer.address().port;
 			done();
 		});
@@ -81,14 +81,14 @@ describe('SocksProxyAgent', function() {
 			});
 		});
 		it('should accept a "string" proxy argument', function() {
-			let agent = new SocksProxyAgent(`socks://127.0.0.1:${socksPort}`);
-			assert.equal('127.0.0.1', agent.proxy.host);
+			let agent = new SocksProxyAgent(`socks://localhost:${socksPort}`);
+			assert.equal('localhost', agent.proxy.host);
 			assert.equal(socksPort, agent.proxy.port);
 		});
 		it('should accept a `url.parse()` result object argument', function() {
-			let opts = url.parse(`socks://127.0.0.1:${socksPort}`);
+			let opts = url.parse(`socks://localhost:${socksPort}`);
 			let agent = new SocksProxyAgent(opts);
-			assert.equal('127.0.0.1', agent.proxy.host);
+			assert.equal('localhost', agent.proxy.host);
 			assert.equal(socksPort, agent.proxy.port);
 		});
 	});
@@ -101,8 +101,8 @@ describe('SocksProxyAgent', function() {
 				res.end(JSON.stringify(req.headers));
 			});
 
-			let agent = new SocksProxyAgent(`socks://127.0.0.1:${socksPort}`);
-			let opts = url.parse(`http://127.0.0.1:${httpPort}/foo`);
+			let agent = new SocksProxyAgent(`socks://localhost:${socksPort}`);
+			let opts = url.parse(`http://localhost:${httpPort}/foo`);
 			opts.agent = agent;
 			opts.headers = { foo: 'bar' };
 			let req = http.get(opts, function(res) {
@@ -126,8 +126,8 @@ describe('SocksProxyAgent', function() {
 				res.end(JSON.stringify(req.headers));
 			});
 
-			let agent = new SocksProxyAgent(`socks://127.0.0.1:${socksPort}`);
-			let opts = url.parse(`https://127.0.0.1:${httpsPort}/foo`);
+			let agent = new SocksProxyAgent(`socks://localhost:${socksPort}`);
+			let opts = url.parse(`https://localhost:${httpsPort}/foo`);
 			opts.agent = agent;
 			opts.rejectUnauthorized = false;
 
