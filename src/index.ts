@@ -14,6 +14,7 @@ namespace createSocksProxyAgent {
 		host?: string | null;
 		port?: string | number | null;
 		username?: string | null;
+		tls?: boolean | null;
 	}
 
 	export interface SocksProxyAgentOptions
