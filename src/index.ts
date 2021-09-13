@@ -1,5 +1,6 @@
 import { Url } from 'url';
 import { SocksProxy } from 'socks';
+import { ConnectionOptions } from 'tls';
 import { AgentOptions } from 'agent-base';
 import _SocksProxyAgent from './agent';
 
@@ -10,10 +11,13 @@ function createSocksProxyAgent(
 }
 
 namespace createSocksProxyAgent {
+	type TlsOptions = Pick<ConnectionOptions, "rejectUnauthorized">;
+
 	interface BaseSocksProxyAgentOptions {
 		host?: string | null;
 		port?: string | number | null;
 		username?: string | null;
+		tls?: TlsOptions | null;
 	}
 
 	export interface SocksProxyAgentOptions
