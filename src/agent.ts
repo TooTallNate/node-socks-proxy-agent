@@ -115,7 +115,7 @@ function parseSocksProxy(
 export default class SocksProxyAgent extends Agent {
 	private lookup: boolean;
 	private proxy: SocksProxy;
-	private tlsRejectUnauthorized: boolean;
+	private tlsConnectionOptions: tls.ConnectionOptions;
 
 	constructor(_opts: string | SocksProxyAgentOptions) {
 		let opts: SocksProxyAgentOptions;
@@ -135,7 +135,7 @@ export default class SocksProxyAgent extends Agent {
 		this.lookup = parsedProxy.lookup;
 		this.proxy = parsedProxy.proxy;
 
-		this.tlsRejectUnauthorized = opts.tls?.rejectUnauthorized ?? false;
+		this.tlsConnectionOptions = opts.tls ?? {};
 	}
 
 	/**
@@ -179,7 +179,7 @@ export default class SocksProxyAgent extends Agent {
 				...omit(opts, 'host', 'hostname', 'path', 'port'),
 				socket,
 				servername,
-				rejectUnauthorized: this.tlsRejectUnauthorized
+				...this.tlsConnectionOptions,
 			});
 		}
 
