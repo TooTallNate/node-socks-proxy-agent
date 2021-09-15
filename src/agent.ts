@@ -115,6 +115,7 @@ function parseSocksProxy(
 export default class SocksProxyAgent extends Agent {
 	private lookup: boolean;
 	private proxy: SocksProxy;
+	private tlsConnectionOptions: tls.ConnectionOptions;
 
 	constructor(_opts: string | SocksProxyAgentOptions) {
 		let opts: SocksProxyAgentOptions;
@@ -133,6 +134,7 @@ export default class SocksProxyAgent extends Agent {
 		const parsedProxy = parseSocksProxy(opts);
 		this.lookup = parsedProxy.lookup;
 		this.proxy = parsedProxy.proxy;
+		this.tlsConnectionOptions = opts.tls || {};
 	}
 
 	/**
@@ -175,7 +177,8 @@ export default class SocksProxyAgent extends Agent {
 			return tls.connect({
 				...omit(opts, 'host', 'hostname', 'path', 'port'),
 				socket,
-				servername
+				servername,
+				...this.tlsConnectionOptions,
 			});
 		}
 
