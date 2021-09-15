@@ -134,7 +134,7 @@ export default class SocksProxyAgent extends Agent {
 		const parsedProxy = parseSocksProxy(opts);
 		this.lookup = parsedProxy.lookup;
 		this.proxy = parsedProxy.proxy;
-		this.tlsConnectionOptions = opts.tls;
+		this.tlsConnectionOptions = opts.tls || {};
 	}
 
 	/**
