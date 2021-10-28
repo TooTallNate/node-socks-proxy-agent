@@ -187,8 +187,8 @@ export default class SocksProxyAgent extends Agent {
 				socket.destroy();
 				tlsSocket.destroy();
 			});
-		
-		return tlsSocket;
+			
+			return tlsSocket;
 		}
 
 		return socket;
