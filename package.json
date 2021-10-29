@@ -83,7 +83,6 @@
   ],
   "dependencies": {
     "agent-base": "^6.0.2",
-    "cacheable-lookup": "~6.0.4",
     "debug": "^4.3.3",
     "socks": "^2.6.2"
   },
@@ -92,7 +91,9 @@
     "@commitlint/config-conventional": "latest",
     "@types/debug": "latest",
     "@types/node": "latest",
+    "cacheable-lookup": "^6.0.4",
     "conventional-github-releaser": "latest",
+    "dns2": "^2.0.1",
     "finepack": "latest",
     "git-authors-cli": "latest",
     "mocha": "latest",
