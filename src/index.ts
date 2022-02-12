@@ -1,32 +1,32 @@
-import { Url } from 'url';
-import { SocksProxy } from 'socks';
-import tls from 'tls';
-import { AgentOptions } from 'agent-base';
-import _SocksProxyAgent from './agent';
+import { Url } from 'url'
+import { SocksProxy } from 'socks'
+import tls from 'tls'
+import { AgentOptions } from 'agent-base'
+import _SocksProxyAgent from './agent'
 
-function createSocksProxyAgent(
-	opts: string | createSocksProxyAgent.SocksProxyAgentOptions
+function createSocksProxyAgent (
+  opts: string | createSocksProxyAgent.SocksProxyAgentOptions
 ): _SocksProxyAgent {
-	return new _SocksProxyAgent(opts);
+  return new _SocksProxyAgent(opts)
 }
 
 namespace createSocksProxyAgent {
-	interface BaseSocksProxyAgentOptions {
-		host?: string | null;
-		port?: string | number | null;
-		username?: string | null;
-		tls?: tls.ConnectionOptions | null;
-	}
+  interface BaseSocksProxyAgentOptions {
+    host?: string | null
+    port?: string | number | null
+    username?: string | null
+    tls?: tls.ConnectionOptions | null
+  }
 
-	export interface SocksProxyAgentOptions
-		extends AgentOptions,
-			BaseSocksProxyAgentOptions,
-			Partial<Omit<Url & SocksProxy, keyof BaseSocksProxyAgentOptions>> {}
+  export interface SocksProxyAgentOptions
+    extends AgentOptions,
+    BaseSocksProxyAgentOptions,
+    Partial<Omit<Url & SocksProxy, keyof BaseSocksProxyAgentOptions>> {}
 
-	export type SocksProxyAgent = _SocksProxyAgent;
-	export const SocksProxyAgent = _SocksProxyAgent;
+  export type SocksProxyAgent = _SocksProxyAgent
+  export const SocksProxyAgent = _SocksProxyAgent
 
-	createSocksProxyAgent.prototype = _SocksProxyAgent.prototype;
+  createSocksProxyAgent.prototype = _SocksProxyAgent.prototype
 }
 
-export = createSocksProxyAgent;
+export = createSocksProxyAgent
