@@ -36,7 +36,6 @@
     "@types/debug": "latest",
     "@types/node": "latest",
     "mocha": "latest",
-    "proxy": "latest",
     "raw-body": "latest",
     "rimraf": "latest",
     "socksv5": "github:TooTallNate/socksv5#fix/dstSock-close-event",
