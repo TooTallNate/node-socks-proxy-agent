@@ -75,9 +75,7 @@ describe('SocksProxyAgent', function () {
 
   describe('constructor', function () {
     it('should throw an Error if no "proxy" argument is given', function () {
-      assert.throws(function () {
-        new SocksProxyAgent()
-      })
+      assert.throws(() => new SocksProxyAgent())
     })
     it('should accept a "string" proxy argument', function () {
       const agent = new SocksProxyAgent(`socks://127.0.0.1:${socksPort}`)

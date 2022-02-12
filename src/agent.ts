@@ -115,12 +115,12 @@ export default class SocksProxyAgent extends Agent {
   private readonly proxy: SocksProxy
   private readonly tlsConnectionOptions: tls.ConnectionOptions
 
-  constructor (_opts: string | SocksProxyAgentOptions) {
+  constructor (input: string | SocksProxyAgentOptions) {
     let opts: SocksProxyAgentOptions
-    if (typeof _opts === 'string') {
-      opts = new URL(_opts)
+    if (typeof input === 'string') {
+      opts = new URL(input)
     } else {
-      opts = _opts
+      opts = input
     }
     if (opts == null) {
       throw new TypeError('a SOCKS proxy server `host` and `port` must be specified!')
