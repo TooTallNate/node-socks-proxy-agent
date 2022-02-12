@@ -1,7 +1,6 @@
 import dns from 'dns';
 import net from 'net';
 import tls from 'tls';
-import url from 'url';
 import createDebug from 'debug';
 import { Agent, ClientRequest, RequestOptions } from 'agent-base';
 import { SocksClient, SocksProxy, SocksClientOptions } from 'socks';
@@ -120,7 +119,7 @@ export default class SocksProxyAgent extends Agent {
 	constructor(_opts: string | SocksProxyAgentOptions) {
 		let opts: SocksProxyAgentOptions;
 		if (typeof _opts === 'string') {
-			opts = url.parse(_opts);
+			opts = new URL(_opts);
 		} else {
 			opts = _opts;
 		}
