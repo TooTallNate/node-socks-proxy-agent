@@ -1,25 +1,13 @@
 import { SocksClient, SocksProxy, SocksClientOptions } from 'socks'
 import { Agent, ClientRequest, RequestOptions } from 'agent-base'
+import CacheableLookup from 'cacheable-lookup'
 import createDebug from 'debug'
-import dns from 'dns'
 import net from 'net'
 import tls from 'tls'
 
 import { SocksProxyAgentOptions } from '.'
 
 const debug = createDebug('socks-proxy-agent')
-
-async function dnsLookup (host: string): Promise<string> {
-  return await new Promise((resolve, reject) => {
-    dns.lookup(host, (err, res) => {
-      if (err != null) {
-        reject(err)
-      } else {
-        resolve(res)
-      }
-    })
-  })
-}
 
 function parseSocksProxy (
   opts: SocksProxyAgentOptions
@@ -30,7 +18,7 @@ function parseSocksProxy (
 
   const host = opts.hostname
 
-  if (!host) {
+  if (host == null) {
     throw new TypeError('No "host"')
   }
 
@@ -105,6 +93,24 @@ function parseSocksProxy (
   return { lookup, proxy }
 }
 
+interface SocksProxyAgentOptionsExtra {
+  dnsCache?: CacheableLookup
+}
+
+const normalizeProxyOptions = (input: string | SocksProxyAgentOptions): SocksProxyAgentOptions => {
+  let proxyOptions: SocksProxyAgentOptions
+  if (typeof input === 'string') {
+    proxyOptions = new URL(input)
+  } else {
+    proxyOptions = input
+  }
+  if (proxyOptions == null) {
+    throw new TypeError('a SOCKS proxy server `host` and `port` must be specified!')
+  }
+
+  return proxyOptions
+}
+
 /**
  * The `SocksProxyAgent`.
  *
@@ -114,23 +120,18 @@ export default class SocksProxyAgent extends Agent {
   private readonly lookup: boolean
   private readonly proxy: SocksProxy
   private readonly tlsConnectionOptions: tls.ConnectionOptions
+  private readonly dnsCache: CacheableLookup
 
-  constructor (input: string | SocksProxyAgentOptions) {
-    let opts: SocksProxyAgentOptions
-    if (typeof input === 'string') {
-      opts = new URL(input)
-    } else {
-      opts = input
-    }
-    if (opts == null) {
-      throw new TypeError('a SOCKS proxy server `host` and `port` must be specified!')
-    }
-    super(opts)
+  constructor (input: string | SocksProxyAgentOptions, options?: SocksProxyAgentOptionsExtra) {
+    const proxyOptions = normalizeProxyOptions(input)
+    super(proxyOptions)
 
-    const parsedProxy = parseSocksProxy(opts)
+    const parsedProxy = parseSocksProxy(proxyOptions)
+
     this.lookup = parsedProxy.lookup
     this.proxy = parsedProxy.proxy
-    this.tlsConnectionOptions = opts.tls != null ? opts.tls : {}
+    this.tlsConnectionOptions = proxyOptions.tls != null ? proxyOptions.tls : {}
+    this.dnsCache = options?.dnsCache ?? new CacheableLookup()
   }
 
   /**
@@ -152,7 +153,8 @@ export default class SocksProxyAgent extends Agent {
 
     if (lookup) {
       // Client-side DNS resolution for "4" and "5" socks proxy versions.
-      host = await dnsLookup(host)
+      const res = await this.dnsCache.lookupAsync(host)
+      host = res.address
     }
 
     const socksOpts: SocksClientOptions = {

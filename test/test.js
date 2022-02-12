@@ -155,4 +155,31 @@ describe('SocksProxyAgent', function () {
       req.once('error', done)
     })
   })
+
+  // it("should use a requests's custom lookup function with socks5", function (done) {
+  //   httpServer.once('request', function (req, res) {
+  //     assert.equal('/foo', req.url)
+  //     res.statusCode = 404
+  //     res.end(JSON.stringify(req.headers))
+  //   })
+
+  //   const agent = new SocksProxyAgent(`socks5://127.0.0.1:${socksPort}`)
+  //   const opts = url.parse(`http://non-existent-domain.test:${httpPort}/foo`)
+  //   opts.agent = agent
+  //   opts.headers = { foo: 'bar' }
+  //   opts.lookup = (hostname, opts, callback) => {
+  //     if (hostname === 'non-existent-domain.test') callback(null, '127.0.0.1')
+  //     else callback(new Error('Bad domain'))
+  //   }
+  //   const req = http.get(opts, function (res) {
+  //     assert.equal(404, res.statusCode)
+  //     getRawBody(res, 'utf8', function (err, buf) {
+  //       if (err) return done(err)
+  //       const data = JSON.parse(buf)
+  //       assert.equal('bar', data.foo)
+  //       done()
+  //     })
+  //   })
+  //   req.once('error', done)
+  // })
 })
