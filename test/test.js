@@ -8,7 +8,7 @@ const path = require('path')
 const fs = require('fs')
 
 const getRawBody = require('raw-body')
-const SocksProxyAgent = require('../')
+const { SocksProxyAgent } = require('..')
 
 describe('SocksProxyAgent', function () {
   let httpServer
@@ -88,6 +88,32 @@ describe('SocksProxyAgent', function () {
       assert.equal('127.0.0.1', agent.proxy.host)
       assert.equal(socksPort, agent.proxy.port)
     })
+    it('setup timeout', function (done) {
+      httpServer.once('request', function (req, res) {
+        assert.equal('/timeout', req.url)
+        res.statusCode = 200
+        setTimeout(() => res.end('Written after 1000'), 500)
+      })
+
+      const agent = new SocksProxyAgent(`socks://127.0.0.1:${socksPort}`, { timeout: 50 })
+
+      const opts = {
+        protocol: 'http:',
+        host: `127.0.0.1:${httpPort}`,
+        port: httpPort,
+        hostname: '127.0.0.1',
+        path: '/timeout',
+        agent,
+        headers: { foo: 'bar' }
+      }
+
+      const req = http.get(opts, function () {})
+
+      req.once('error', err => {
+        assert.equal(err.message, 'socket hang up')
+        done()
+      })
+    })
   })
 
   describe('"http" module', function () {
@@ -155,31 +181,4 @@ describe('SocksProxyAgent', function () {
       req.once('error', done)
     })
   })
-
-  // it("should use a requests's custom lookup function with socks5", function (done) {
-  //   httpServer.once('request', function (req, res) {
-  //     assert.equal('/foo', req.url)
-  //     res.statusCode = 404
-  //     res.end(JSON.stringify(req.headers))
-  //   })
-
-  //   const agent = new SocksProxyAgent(`socks5://127.0.0.1:${socksPort}`)
-  //   const opts = url.parse(`http://non-existent-domain.test:${httpPort}/foo`)
-  //   opts.agent = agent
-  //   opts.headers = { foo: 'bar' }
-  //   opts.lookup = (hostname, opts, callback) => {
-  //     if (hostname === 'non-existent-domain.test') callback(null, '127.0.0.1')
-  //     else callback(new Error('Bad domain'))
-  //   }
-  //   const req = http.get(opts, function (res) {
-  //     assert.equal(404, res.statusCode)
-  //     getRawBody(res, 'utf8', function (err, buf) {
-  //       if (err) return done(err)
-  //       const data = JSON.parse(buf)
-  //       assert.equal('bar', data.foo)
-  //       done()
-  //     })
-  //   })
-  //   req.once('error', done)
-  // })
 })
