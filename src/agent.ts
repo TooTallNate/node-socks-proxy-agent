@@ -9,9 +9,7 @@ import { SocksProxyAgentOptions } from '.'
 
 const debug = createDebug('socks-proxy-agent')
 
-function parseSocksProxy (
-  opts: SocksProxyAgentOptions
-): { lookup: boolean, proxy: SocksProxy } {
+function parseSocksProxy (opts: SocksProxyAgentOptions): { lookup: boolean, proxy: SocksProxy } {
   let port = 0
   let lookup = false
   let type: SocksProxy['type'] = 5
@@ -40,13 +38,13 @@ function parseSocksProxy (
     switch (opts.protocol.replace(':', '')) {
       case 'socks4':
         lookup = true
-        // pass through
+      // pass through
       case 'socks4a':
         type = 4
         break
       case 'socks5':
         lookup = true
-        // pass through
+      // pass through
       case 'socks': // no version specified, default to 5h
       case 'socks5h':
         type = 5
@@ -139,11 +137,8 @@ export default class SocksProxyAgent extends Agent {
    * which in turn connects to the specified remote host and port.
    *
    * @api protected
-  */
-  async callback (
-    req: ClientRequest,
-    opts: RequestOptions
-  ): Promise<net.Socket> {
+   */
+  async callback (req: ClientRequest, opts: RequestOptions): Promise<net.Socket> {
     const { lookup, proxy } = this
     let { host, port, timeout } = opts
 
@@ -171,13 +166,24 @@ export default class SocksProxyAgent extends Agent {
       // The proxy is connecting to a TLS server, so upgrade
       // this socket connection to a TLS connection.
       debug('Upgrading socket connection to TLS')
-      const servername = opts.servername || opts.host
-      return tls.connect({
+      const servername = opts.servername ?? opts.host
+
+      const tlsSocket = tls.connect({
         ...omit(opts, 'host', 'hostname', 'path', 'port'),
         socket,
         servername,
         ...this.tlsConnectionOptions
       })
+
+      tlsSocket.once('error', (error) => {
+        debug('socket TLS error', error.message)
+        socket.removeAllListeners()
+        tlsSocket.removeAllListeners()
+        socket.destroy()
+        tlsSocket.destroy()
+      })
+
+      return tlsSocket
     }
 
     return socket
@@ -188,9 +194,9 @@ function omit<T extends object, K extends [...Array<keyof T>]> (
   obj: T,
   ...keys: K
 ): {
-    [K2 in Exclude<keyof T, K[number]>]: T[K2];
+    [K2 in Exclude<keyof T, K[number]>]: T[K2]
   } {
-  const ret = {} as { [K in keyof typeof obj]: (typeof obj)[K]; }
+  const ret = {} as { [K in keyof typeof obj]: typeof obj[K] }
   let key: keyof typeof obj
   for (key in obj) {
     if (!keys.includes(key)) {
