@@ -1,9 +1,9 @@
 import { SocksClient, SocksProxy, SocksClientOptions } from 'socks'
 import { Agent, ClientRequest, RequestOptions } from 'agent-base'
-import CacheableLookup from 'cacheable-lookup'
 import { AgentOptions } from 'agent-base';
 import createDebug from 'debug'
 import { Url } from 'url'
+import dns from 'dns'
 import net from 'net'
 import tls from 'tls'
 
@@ -15,7 +15,6 @@ interface BaseSocksProxyAgentOptions {
 }
 
 interface SocksProxyAgentOptionsExtra {
-  dnsCache?: CacheableLookup
   timeout?: number
 }
 
@@ -120,10 +119,9 @@ const normalizeProxyOptions = (input: string | SocksProxyAgentOptions): SocksPro
 export interface SocksProxyAgentOptions extends AgentOptions, BaseSocksProxyAgentOptions, Partial<Omit<Url & SocksProxy, keyof BaseSocksProxyAgentOptions>> {}
 
 export class SocksProxyAgent extends Agent {
-  private readonly lookup: boolean
+  private readonly shouldLookup: boolean
   private readonly proxy: SocksProxy
   private readonly tlsConnectionOptions: tls.ConnectionOptions
-  private readonly dnsCache: CacheableLookup
   public timeout: number | null
 
   constructor (input: string | SocksProxyAgentOptions, options?: SocksProxyAgentOptionsExtra) {
@@ -132,10 +130,9 @@ export class SocksProxyAgent extends Agent {
 
     const parsedProxy = parseSocksProxy(proxyOptions)
 
-    this.lookup = parsedProxy.lookup
+    this.shouldLookup = parsedProxy.lookup
     this.proxy = parsedProxy.proxy
     this.tlsConnectionOptions = proxyOptions.tls != null ? proxyOptions.tls : {}
-    this.dnsCache = options?.dnsCache ?? new CacheableLookup()
     this.timeout = options?.timeout ?? null
   }
 
@@ -146,18 +143,27 @@ export class SocksProxyAgent extends Agent {
    * @api protected
    */
   async callback (req: ClientRequest, opts: RequestOptions): Promise<net.Socket> {
-    const { lookup, proxy, timeout } = this
+    const { shouldLookup, proxy, timeout } = this
 
-    let { host, port } = opts
+    let { host, port, lookup: lookupCallback } = opts
 
     if (host == null) {
       throw new Error('No `host` defined!')
     }
 
-    if (lookup) {
+    if (shouldLookup) {
       // Client-side DNS resolution for "4" and "5" socks proxy versions.
-      const res = await this.dnsCache.lookupAsync(host)
-      host = res.address
+      host = await new Promise<string>((resolve, reject) => {
+        // Use the request's custom lookup, if one was configured:
+        const lookupFn = lookupCallback ?? dns.lookup
+        lookupFn(host!, {}, (err, res) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(res)
+          }
+        })
+      })
     }
 
     const socksOpts: SocksClientOptions = {

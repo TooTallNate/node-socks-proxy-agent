@@ -4,8 +4,12 @@ const socks = require('socksv5')
 const assert = require('assert')
 const https = require('https')
 const http = require('http')
+const url = require('url')
 const path = require('path')
 const fs = require('fs')
+
+const dns2 = require('dns2')
+const CacheableLookup = require('cacheable-lookup')
 
 const getRawBody = require('raw-body')
 const { SocksProxyAgent } = require('..')
@@ -179,6 +183,108 @@ describe('SocksProxyAgent', function () {
         })
       })
       req.once('error', done)
+    })
+  })
+
+  describe('Custom lookup option', function () {
+
+    let dnsServer
+    let dnsQueries
+
+    before((done) => {
+      dnsQueries = []
+
+      // A custom DNS server that always replies with 127.0.0.1:
+      dnsServer = dns2.createServer({
+        udp: true,
+        handle: (request, send) => {
+          const response = dns2.Packet.createResponseFromRequest(request)
+          const [ question ] = request.questions
+          const { name } = question
+
+          dnsQueries.push({ type: question.type, name: question.name })
+
+          response.answers.push({
+            name,
+            type: dns2.Packet.TYPE.A,
+            class: dns2.Packet.CLASS.IN,
+            ttl: 300,
+            address: '127.0.0.1'
+          })
+          send(response)
+        }
+      })
+      dnsServer.listen({ udp: 5333 })
+      dnsServer.on('listening', () => done())
+    })
+
+    after(() => {
+      dnsServer.close()
+    })
+
+    it("should use a requests's custom lookup function with socks5", function(done) {
+      httpServer.once('request', function(req, res) {
+        assert.equal('/foo', req.url)
+        res.statusCode = 404
+        res.end()
+      })
+
+      let agent = new SocksProxyAgent(`socks5://127.0.0.1:${socksPort}`)
+      let opts = url.parse(`http://non-existent-domain.test:${httpPort}/foo`)
+      opts.agent = agent
+
+      opts.lookup = (hostname, opts, callback) => {
+        if (hostname === 'non-existent-domain.test') callback(null, '127.0.0.1')
+        else callback(new Error("Bad domain"))
+      }
+
+      let req = http.get(opts, function(res) {
+        assert.equal(404, res.statusCode)
+        getRawBody(res, 'utf8', function(err, buf) {
+          if (err) return done(err)
+          done()
+        })
+      })
+      req.once('error', done)
+    })
+
+    it("should support caching DNS requests", function(done) {
+      httpServer.on('request', function(req, res) {
+        res.statusCode = 200
+        res.end()
+      })
+
+      let agent = new SocksProxyAgent(`socks5://127.0.0.1:${socksPort}`)
+      let opts = url.parse(`http://test-domain.test:${httpPort}/foo`)
+      opts.agent = agent
+
+      const cacheableLookup = new CacheableLookup()
+      cacheableLookup.servers = ['127.0.0.1:5333']
+      opts.lookup = cacheableLookup.lookup
+
+      // No DNS queries made initially
+      assert.deepEqual(dnsQueries, [])
+
+      http.get(opts, function(res) {
+        assert.equal(200, res.statusCode)
+
+        // Initial DNS query for first request
+        assert.deepEqual(dnsQueries, [
+          { name: 'test-domain.test', type: dns2.Packet.TYPE.A },
+          { name: 'test-domain.test', type: dns2.Packet.TYPE.AAAA }
+        ])
+
+        http.get(opts, function(res) {
+          assert.equal(200, res.statusCode)
+
+          // Still the same. No new DNS queries, so the response was cached
+          assert.deepEqual(dnsQueries, [
+            { name: 'test-domain.test', type: dns2.Packet.TYPE.A },
+            { name: 'test-domain.test', type: dns2.Packet.TYPE.AAAA }
+          ])
+          done()
+        }).once('error', done)
+      }).once('error', done)
     })
   })
 })
