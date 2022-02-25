@@ -16,7 +16,7 @@ Installation
 Install with `npm`:
 
 ``` bash
-$ npm install socks-proxy-agent
+npm install socks-proxy-agent
 ```
 
 
