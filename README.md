@@ -30,7 +30,7 @@ import https from 'https';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 
 const info = {
-	host: 'br41.nordvpn.com',
+	hostname: 'br41.nordvpn.com',
 	userId: 'your-name@gmail.com',
 	password: 'abcdef12345124'
 };
