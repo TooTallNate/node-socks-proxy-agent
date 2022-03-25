@@ -47,7 +47,7 @@ https.get('https://jsonip.org', { agent }, (res) => {
 ```js
 var url = require('url');
 var http = require('http');
-var SocksProxyAgent = require('socks-proxy-agent');
+var { SocksProxyAgent } = require('socks-proxy-agent');
 
 // SOCKS proxy to connect to
 var proxy = process.env.socks_proxy || 'socks://127.0.0.1:1080';
@@ -73,7 +73,7 @@ http.get(opts, function (res) {
 ```js
 var url = require('url');
 var https = require('https');
-var SocksProxyAgent = require('socks-proxy-agent');
+var { SocksProxyAgent } = require('socks-proxy-agent');
 
 // SOCKS proxy to connect to
 var proxy = process.env.socks_proxy || 'socks://127.0.0.1:1080';
@@ -98,7 +98,7 @@ https.get(opts, function (res) {
 
 ``` js
 var WebSocket = require('ws');
-var SocksProxyAgent = require('socks-proxy-agent');
+var { SocksProxyAgent } = require('socks-proxy-agent');
 
 // SOCKS proxy to connect to
 var proxy = process.env.socks_proxy || 'socks://127.0.0.1:1080';
