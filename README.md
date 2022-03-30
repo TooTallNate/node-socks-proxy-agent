@@ -36,7 +36,7 @@ const info = {
 };
 const agent = new SocksProxyAgent(info);
 
-https.get('https://jsonip.org', { agent }, (res) => {
+https.get('https://ipinfo.io', { agent }, (res) => {
 	console.log(res.headers);
 	res.pipe(process.stdout);
 });
