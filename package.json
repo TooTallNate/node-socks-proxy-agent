@@ -2,7 +2,7 @@
   "name": "socks-proxy-agent",
   "description": "A SOCKS proxy `http.Agent` implementation for HTTP and HTTPS",
   "homepage": "https://github.com/TooTallNate/node-socks-proxy-agent#readme",
-  "version": "6.2.0-beta.1",
+  "version": "6.2.0",
   "main": "dist/index.js",
   "author": {
     "email": "nathan@tootallnate.net",
