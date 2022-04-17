@@ -158,6 +158,17 @@
       "@commitlint/config-conventional"
     ]
   },
+  "nano-staged": {
+    "*.js": [
+      "prettier-standard"
+    ],
+    "*.md": [
+      "standard-markdown"
+    ],
+    "package.json": [
+      "finepack"
+    ]
+  },
   "simple-git-hooks": {
     "commit-msg": "npx commitlint --edit",
     "pre-commit": "npx nano-staged"
