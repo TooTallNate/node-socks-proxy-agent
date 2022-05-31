@@ -8,6 +8,11 @@ import net from 'net'
 import tls from 'tls'
 
 interface BaseSocksProxyAgentOptions {
+  /**
+   * hostname is preferred over host
+   * 
+   * @deprecated
+   */
   host?: string | null;
   port?: string | number | null;
   username?: string | null;
@@ -25,10 +30,10 @@ function parseSocksProxy (opts: SocksProxyAgentOptions): { lookup: boolean, prox
   let lookup = false
   let type: SocksProxy['type'] = 5
 
-  const host = opts.hostname
+  const host = opts.hostname || opts.host
 
   if (host == null) {
-    throw new TypeError('No "host"')
+    throw new TypeError('No "hostname"')
   }
 
   if (typeof opts.port === 'number') {
@@ -110,7 +115,7 @@ const normalizeProxyOptions = (input: string | SocksProxyAgentOptions): SocksPro
     proxyOptions = input
   }
   if (proxyOptions == null) {
-    throw new TypeError('a SOCKS proxy server `host` and `port` must be specified!')
+    throw new TypeError('a SOCKS proxy server `hostname` and `port` must be specified!')
   }
 
   return proxyOptions
