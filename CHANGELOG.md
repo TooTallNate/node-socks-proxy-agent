@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.2.1](https://github.com/TooTallNate/node-socks-proxy-agent/compare/v6.2.0...v6.2.1) (2022-05-31)
+
+
+### Bug Fixes
+
+* make opts.host work again ([#96](https://github.com/TooTallNate/node-socks-proxy-agent/issues/96)) ([eb87f6c](https://github.com/TooTallNate/node-socks-proxy-agent/commit/eb87f6c27b06a85825df9a8ac8ef133d66566058))
+
 ## [6.2.0](https://github.com/TooTallNate/node-socks-proxy-agent/compare/v6.2.0-beta.1...v6.2.0) (2022-04-17)
 
 ## [6.2.0-beta.1](https://github.com/TooTallNate/node-socks-proxy-agent/compare/v6.2.0-beta.0...v6.2.0-beta.1) (2022-02-15)
