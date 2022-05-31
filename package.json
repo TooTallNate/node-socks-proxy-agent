@@ -113,7 +113,7 @@
     "@types/node": "latest",
     "cacheable-lookup": "^6.0.4",
     "conventional-github-releaser": "latest",
-    "dns2": "^2.0.1",
+    "dns2": "latest",
     "finepack": "latest",
     "git-authors-cli": "latest",
     "mocha": "9",
