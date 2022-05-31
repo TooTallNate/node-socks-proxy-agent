@@ -115,7 +115,7 @@
     "@commitlint/config-conventional": "latest",
     "@types/debug": "latest",
     "@types/node": "latest",
-    "cacheable-lookup": "^6.0.4",
+    "cacheable-lookup": "latest",
     "conventional-github-releaser": "latest",
     "dns2": "latest",
     "finepack": "latest",
