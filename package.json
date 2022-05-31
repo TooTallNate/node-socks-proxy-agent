@@ -116,7 +116,7 @@
     "dns2": "^2.0.1",
     "finepack": "latest",
     "git-authors-cli": "latest",
-    "mocha": "latest",
+    "mocha": "9",
     "nano-staged": "latest",
     "npm-check-updates": "latest",
     "prettier-standard": "latest",
