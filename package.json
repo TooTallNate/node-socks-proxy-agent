@@ -120,7 +120,7 @@
     "dns2": "latest",
     "finepack": "latest",
     "git-authors-cli": "latest",
-    "mocha": "9",
+    "mocha": "10",
     "nano-staged": "latest",
     "npm-check-updates": "latest",
     "prettier-standard": "latest",
