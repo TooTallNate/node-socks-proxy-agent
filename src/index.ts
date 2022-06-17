@@ -9,6 +9,7 @@ import tls from 'tls'
 
 interface BaseSocksProxyAgentOptions {
   host?: string | null;
+  hostname?: string | null;
   port?: string | number | null;
   username?: string | null;
   tls?: tls.ConnectionOptions | null;
@@ -25,7 +26,7 @@ function parseSocksProxy (opts: SocksProxyAgentOptions): { lookup: boolean, prox
   let lookup = false
   let type: SocksProxy['type'] = 5
 
-  const host = opts.hostname
+  const host = opts.hostname || opts.host
 
   if (host == null) {
     throw new TypeError('No "host"')
