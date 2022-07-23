@@ -25,10 +25,10 @@ function parseSocksProxy (opts: SocksProxyAgentOptions): { lookup: boolean, prox
   let lookup = false
   let type: SocksProxy['type'] = 5
 
-  const host = opts.hostname
+  const host = opts.hostname ?? opts.host
 
   if (host == null) {
-    throw new TypeError('You didn\'t specify "hostname" in options!')
+    throw new TypeError('You didn\'t specify "hostname" or "host" in options!')
   }
 
   if (typeof opts.port === 'number') {

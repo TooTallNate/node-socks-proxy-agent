@@ -19,7 +19,6 @@ Install with `npm`:
 npm install socks-proxy-agent
 ```
 
-
 Examples
 --------
 
@@ -30,8 +29,8 @@ import https from 'https';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 
 const info = {
-	hostname: 'br41.nordvpn.com',
-	userId: 'your-name@gmail.com',
+	hostname: 'br41.nordvpn.com', // could be named "hostname" or "host"
+	userId: 'your-name@gmail.com', // could be named "userId" or "username"
 	password: 'abcdef12345124'
 };
 const agent = new SocksProxyAgent(info);
