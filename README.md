@@ -105,7 +105,7 @@ var proxy = process.env.socks_proxy || 'socks://127.0.0.1:1080';
 console.log('using proxy server %j', proxy);
 
 // WebSocket endpoint for the proxy to connect to
-var endpoint = process.argv[2] || 'ws://echo.websocket.org';
+var endpoint = process.argv[2] || 'ws://echo.websocket.events';
 console.log('attempting to connect to WebSocket %j', endpoint);
 
 // create an instance of the `SocksProxyAgent` class with the proxy server information
